@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ordem de Serviço</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+  :root {
+    --azul: #0f62fe;
+    --azul-escuro: #0043ce;
+    --fundo: #f4f4f4;
+    --branco: #ffffff;
+    --cinza-claro: #e0e0e0;
+    --cinza-medio: #a8a8a8;
+    --cinza-texto: #525252;
+    --preto: #161616;
+    --verde: #24a148;
+    --vermelho: #da1e28;
+    --amarelo: #f1c21b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--fundo);
+    color: var(--preto);
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--azul);
+    color: white;
+    padding: 20px 16px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .header-icon {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .header p { font-size: 12px; opacity: 0.75; margin-left: 46px; }
+
+  /* STEPS */
+  .steps {
+    display: flex;
+    background: var(--azul-escuro);
+    padding: 0 16px;
+  }
+  .step-btn {
+    flex: 1; padding: 10px 4px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    background: none; border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer; transition: all .2s;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .step-btn.active { color: white; border-bottom-color: var(--amarelo); }
+  .step-btn.done { color: rgba(255,255,255,0.75); }
+
+  /* CONTAINER */
+  .container { padding: 16px; max-width: 480px; margin: 0 auto; }
+
+  /* CARD */
+  .card {
+    background: var(--branco);
+    border-radius: 4px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .card-header {
+    background: var(--preto);
+    color: white;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-body { padding: 14px; }
+
+  /* FORM */
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  label {
+    display: block;
+    font-size: 12px; font-weight: 600;
+    color: var(--cinza-texto);
+    margin-bottom: 4px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  label .req { color: var(--vermelho); margin-left: 2px; }
+  input, textarea, select {
+    width: 100%;
+    border: 1px solid var(--cinza-claro);
+    border-bottom: 2px solid var(--cinza-medio);
+    border-radius: 0;
+    padding: 10px 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: var(--preto);
+    background: #f9f9f9;
+    transition: border-color .2s, background .2s;
+    -webkit-appearance: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--azul);
+    border-bottom-color: var(--azul);
+    background: white;
+    box-shadow: inset 0 0 0 1px var(--azul);
+  }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* STATUS CHIPS */
+  .status-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .status-chip {
+    padding: 7px 12px;
+    border: 1.5px solid var(--cinza-claro);
+    border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all .15s;
+    background: white;
+  }
+  .status-chip.selected-verde { background: var(--verde); border-color: var(--verde); color: white; }
+  .status-chip.selected-amarelo { background: var(--amarelo); border-color: var(--amarelo); color: var(--preto); }
+  .status-chip.selected-vermelho { background: var(--vermelho); border-color: var(--vermelho); color: white; }
+
+  /* ASSINATURA */
+  .sig-wrap {
+    border: 2px dashed var(--cinza-claro);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    background: #fafafa;
+  }
+  .sig-label-float {
+    position: absolute; top: 8px; left: 10px;
+    font-size: 10px; color: var(--cinza-medio);
+    font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; pointer-events: none;
+  }
+  canvas {
+    display: block;
+    width: 100%; height: 130px;
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .sig-actions {
+    display: flex; justify-content: flex-end;
+    padding: 6px 8px;
+    background: white;
+    border-top: 1px solid var(--cinza-claro);
+    gap: 8px;
+  }
+  .sig-status {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 8px; border-radius: 10px;
+    display: none;
+  }
+  .sig-status.ok { background: #defbe6; color: var(--verde); display: inline-block; }
+
+  /* BOTÕES */
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px;
+    border: none; border-radius: 0;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all .15s;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary { background: var(--azul); color: white; }
+  .btn-primary:hover { background: var(--azul-escuro); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-success { background: var(--verde); color: white; }
+  .btn-success:hover { background: #1d8a3d; }
+  .btn-outline {
+    background: white; color: var(--azul);
+    border: 2px solid var(--azul);
+  }
+  .btn-sm {
+    padding: 6px 12px; font-size: 12px;
+    width: auto; border-radius: 2px;
+  }
+  .btn-danger-sm {
+    background: none; color: var(--vermelho);
+    border: 1px solid var(--vermelho);
+    padding: 5px 10px; font-size: 11px;
+    width: auto; border-radius: 2px;
+    cursor: pointer; font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+  }
+
+  /* PÁGINA ATIVA */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* PREVIEW */
+  .preview-row {
+    display: flex; justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--fundo);
+    font-size: 13px;
+  }
+  .preview-row:last-child { border-bottom: none; }
+  .preview-key { color: var(--cinza-texto); font-weight: 500; font-size: 12px; }
+  .preview-val { font-weight: 600; text-align: right; max-width: 60%; }
+
+  /* SUCESSO */
+  .success-screen {
+    text-align: center; padding: 40px 20px;
+  }
+  .success-icon {
+    width: 72px; height: 72px;
+    background: var(--verde);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 20px;
+    animation: pop .4s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  .success-screen h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .success-screen p { color: var(--cinza-texto); font-size: 14px; margin-bottom: 24px; }
+
+  .os-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px; font-weight: 600;
+    color: var(--azul); letter-spacing: 2px;
+    background: #edf5ff;
+    padding: 12px 20px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 24px;
+  }
+
+  /* NOTIFICAÇÃO */
+  .toast {
+    position: fixed; bottom: 20px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--preto); color: white;
+    padding: 12px 20px; border-radius: 4px;
+    font-size: 13px; font-weight: 500;
+    transition: transform .3s; z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .badge {
+    background: var(--amarelo);
+    color: var(--preto);
+    font-size: 10px; font-weight: 700;
+    padding: 2px 6px; border-radius: 10px;
+    margin-left: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="header-icon">🔧</div>
+    <h1>Ordem de Serviço</h1>
+  </div>
+  <p id="os-id-header">Nova OS — <span id="data-hora-header"></span></p>
+</div>
+
+<div class="steps">
+  <button class="step-btn active" onclick="goTo(0)">1 · Dados</button>
+  <button class="step-btn" onclick="goTo(1)">2 · Serviço</button>
+  <button class="step-btn" onclick="goTo(2)">3 · Assinaturas</button>
+  <button class="step-btn" onclick="goTo(3)">4 · Revisar</button>
+</div>
+
+<!-- ============ PÁGINA 1: DADOS ============ -->
+<div class="page active" id="page-0">
+  <div class="container">
+
+    <div class="card">
+      <div class="card-header">🏢 Cliente</div>
+      <div class="card-body">
+        <div class="field">
+          <label>Nome / Empresa <span class="req">*</span></label>
+          <input type="text" id="cliente-nome" placeholder="Ex: João Silva / Tech Ltda" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Telefone</label>
+            <input type="tel" id="cliente-tel" placeholder="(11) 99999-9999" />
+          </div>
+          <div class="field">
+            <label>CPF / CNPJ</label>
+            <input type="text" id="cliente-doc" placeholder="000.000.000-00" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Endereço <span class="req">*</span></label>
+          <input type="text" id="cliente-end" placeholder="Rua, número, bairro, cidade" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">👷 Técnico Responsável</div>
+      <div class="card-body">
+        <div class="field">
+          <label>Nome do Técnico <span class="req">*</span></label>
+          <input type="text" id="tec-nome" placeholder="Seu nome completo" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Matrícula</label>
+            <input type="text" id="tec-matricula" placeholder="TEC-001" />
+          </div>
+          <div class="field">
+            <label>Data <span class="req">*</span></label>
+            <input type="date" id="tec-data" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="nextPage(0)">
+      Próximo: Dados do Serviço →
+    </button>
+  </div>
+</div>
+
+<!-- ============ PÁGINA 2: SERVIÇO ============ -->
+<div class="page" id="page-1">
+  <div class="container">
+
+    <div class="card">
+      <div class="card-header">⚙️ Detalhes do Serviço</div>
+      <div class="card-body">
+        <div class="field">
+          <label>Tipo de Serviço <span class="req">*</span></label>
+          <select id="serv-tipo">
+            <option value="">Selecione...</option>
+            <option>Instalação</option>
+            <option>Manutenção Preventiva</option>
+            <option>Manutenção Corretiva</option>
+            <option>Configuração</option>
+            <option>Visita Técnica</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Equipamento / Local</label>
+          <input type="text" id="serv-equip" placeholder="Ex: Servidor Dell, Câmera IP, Ar-condicionado" />
+        </div>
+        <div class="field">
+          <label>Descrição do Problema Relatado</label>
+          <textarea id="serv-problema" placeholder="O que o cliente descreveu antes do atendimento..."></textarea>
+        </div>
+        <div class="field">
+          <label>Serviço Executado <span class="req">*</span></label>
+          <textarea id="serv-executado" placeholder="Descreva detalhadamente o que foi feito..." style="min-height:100px"></textarea>
+        </div>
+        <div class="field">
+          <label>Peças / Materiais Utilizados</label>
+          <textarea id="serv-pecas" placeholder="Ex: 2x cabo UTP cat6, 1x switch 8p..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">📊 Status do Atendimento</div>
+      <div class="card-body">
+        <div class="status-group" id="status-group">
+          <div class="status-chip" onclick="selectStatus(this,'verde')">✅ Concluído</div>
+          <div class="status-chip" onclick="selectStatus(this,'amarelo')">⚠️ Pendente</div>
+          <div class="status-chip" onclick="selectStatus(this,'vermelho')">❌ Não Resolvido</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">⏱️ Tempo de Atendimento</div>
+      <div class="card-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Início</label>
+            <input type="time" id="hora-inicio" />
+          </div>
+          <div class="field">
+            <label>Término</label>
+            <input type="time" id="hora-fim" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" onclick="goTo(0)" style="flex:1">← Voltar</button>
+      <button class="btn btn-primary" onclick="nextPage(1)" style="flex:2">Próximo: Assinaturas →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PÁGINA 3: ASSINATURAS ============ -->
+<div class="page" id="page-2">
+  <div class="container">
+
+    <div class="card">
+      <div class="card-header">✍️ Assinatura do Cliente</div>
+      <div class="card-body">
+        <p style="font-size:12px;color:var(--cinza-texto);margin-bottom:10px">
+          Peça ao cliente para assinar no campo abaixo:
+        </p>
+        <div class="sig-wrap">
+          <span class="sig-label-float">ASSINE AQUI</span>
+          <canvas id="sig-cliente" width="800" height="260"></canvas>
+          <div class="sig-actions">
+            <span class="sig-status" id="status-cliente">✓ Assinado</span>
+            <button class="btn-danger-sm" onclick="clearSig('sig-cliente','status-cliente')">Limpar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">✍️ Assinatura do Técnico</div>
+      <div class="card-body">
+        <p style="font-size:12px;color:var(--cinza-texto);margin-bottom:10px">
+          Agora assine como técnico responsável:
+        </p>
+        <div class="sig-wrap">
+          <span class="sig-label-float">ASSINE AQUI</span>
+          <canvas id="sig-tecnico" width="800" height="260"></canvas>
+          <div class="sig-actions">
+            <span class="sig-status" id="status-tecnico">✓ Assinado</span>
+            <button class="btn-danger-sm" onclick="clearSig('sig-tecnico','status-tecnico')">Limpar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" onclick="goTo(1)" style="flex:1">← Voltar</button>
+      <button class="btn btn-primary" onclick="nextPage(2)" style="flex:2">Próximo: Revisar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PÁGINA 4: REVISÃO ============ -->
+<div class="page" id="page-3">
+  <div class="container">
+
+    <div class="card">
+      <div class="card-header">👁 Resumo da OS</div>
+      <div class="card-body" id="preview-body">
+        <!-- preenchido via JS -->
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">✅ Confirmação de Assinaturas</div>
+      <div class="card-body">
+        <div id="sig-confirm" style="display:flex;gap:12px;flex-wrap:wrap"></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:10px">
+      <button class="btn btn-outline" onclick="goTo(2)" style="flex:1">← Voltar</button>
+    </div>
+
+    <button class="btn btn-success" onclick="gerarPDF()" style="font-size:15px;padding:16px">
+      📄 Gerar PDF e Finalizar
+    </button>
+  </div>
+</div>
+
+<!-- ============ TELA SUCESSO ============ -->
+<div class="page" id="page-success">
+  <div class="container">
+    <div class="card">
+      <div class="success-screen">
+        <div class="success-icon">✓</div>
+        <h2>OS Finalizada!</h2>
+        <p>O documento foi gerado com sucesso.<br>Compartilhe com seu gestor.</p>
+        <div class="os-number" id="os-final-num">OS #0000</div>
+        <button class="btn btn-primary" onclick="novaOS()" style="margin-bottom:10px">+ Nova Ordem de Serviço</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── ESTADO ───────────────────────────────
+let currentPage = 0;
+let statusSelecionado = '';
+const osNum = 'OS-' + String(Math.floor(1000 + Math.random() * 9000));
+
+// Data/hora no header
+const agora = new Date();
+document.getElementById('data-hora-header').textContent =
+  agora.toLocaleDateString('pt-BR') + ' · ' + agora.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+document.getElementById('os-id-header').innerHTML =
+  `<strong>${osNum}</strong> — ${agora.toLocaleDateString('pt-BR')} ${agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+
+// Preenche data de hoje
+document.getElementById('tec-data').value = agora.toISOString().split('T')[0];
+
+// ─── NAVEGAÇÃO ────────────────────────────
+function goTo(n) {
+  document.querySelectorAll('.page').forEach((p,i) => p.classList.toggle('active', i === n));
+  document.querySelectorAll('.step-btn').forEach((b,i) => {
+    b.classList.toggle('active', i === n);
+    b.classList.toggle('done', i < n);
+  });
+  currentPage = n;
+  window.scrollTo(0, 0);
+  if (n === 3) buildPreview();
+}
+
+function nextPage(from) {
+  if (!validar(from)) return;
+  goTo(from + 1);
+}
+
+// ─── VALIDAÇÃO ────────────────────────────
+function validar(page) {
+  const rules = [
+    [{id:'cliente-nome',label:'Nome do cliente'},{id:'cliente-end',label:'Endereço'},{id:'tec-nome',label:'Nome do técnico'},{id:'tec-data',label:'Data'}],
+    [{id:'serv-tipo',label:'Tipo de serviço'},{id:'serv-executado',label:'Serviço executado'}],
+    []
+  ];
+  for (const r of rules[page]) {
+    if (!document.getElementById(r.id).value.trim()) {
+      toast(`⚠️ Preencha: ${r.label}`);
+      document.getElementById(r.id).focus();
+      return false;
+    }
+  }
+  if (page === 1 && !statusSelecionado) { toast('⚠️ Selecione o status do atendimento'); return false; }
+  if (page === 2) {
+    if (isCanvasBlank('sig-cliente')) { toast('⚠️ Assinatura do cliente está vazia'); return false; }
+    if (isCanvasBlank('sig-tecnico')) { toast('⚠️ Assinatura do técnico está vazia'); return false; }
+  }
+  return true;
+}
+
+// ─── STATUS ───────────────────────────────
+function selectStatus(el, cor) {
+  document.querySelectorAll('.status-chip').forEach(c => c.className = 'status-chip');
+  el.classList.add('selected-' + cor);
+  statusSelecionado = el.textContent.trim();
+}
+
+// ─── CANVAS / ASSINATURAS ─────────────────
+function initCanvas(id, statusId) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / r.width;
+    const scaleY = canvas.height / r.height;
+    const src = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - r.left) * scaleX, y: (src.clientY - r.top) * scaleY };
+  }
+
+  ctx.strokeStyle = '#0f62fe';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  canvas.addEventListener('mousedown', e => { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+  canvas.addEventListener('mousemove', e => { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+  canvas.addEventListener('mouseup', () => { drawing = false; checkSig(id, statusId); });
+  canvas.addEventListener('mouseleave', () => { drawing = false; });
+
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, {passive:false});
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }, {passive:false});
+  canvas.addEventListener('touchend', () => { drawing = false; checkSig(id, statusId); });
+}
+
+function checkSig(id, statusId) {
+  if (!isCanvasBlank(id)) document.getElementById(statusId).classList.add('ok');
+}
+
+function clearSig(id, statusId) {
+  const canvas = document.getElementById(id);
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  document.getElementById(statusId).classList.remove('ok');
+}
+
+function isCanvasBlank(id) {
+  const canvas = document.getElementById(id);
+  const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+  return !data.some(v => v !== 0);
+}
+
+initCanvas('sig-cliente', 'status-cliente');
+initCanvas('sig-tecnico', 'status-tecnico');
+
+// ─── PREVIEW ──────────────────────────────
+function v(id) { return document.getElementById(id).value || '—'; }
+function buildPreview() {
+  const body = document.getElementById('preview-body');
+  const rows = [
+    ['Nº da OS', osNum],
+    ['Data', new Date(v('tec-data') + 'T12:00').toLocaleDateString('pt-BR')],
+    ['Técnico', v('tec-nome')],
+    ['Matrícula', v('tec-matricula')],
+    ['Cliente', v('cliente-nome')],
+    ['Endereço', v('cliente-end')],
+    ['Telefone', v('cliente-tel')],
+    ['Tipo de Serviço', v('serv-tipo')],
+    ['Equipamento', v('serv-equip')],
+    ['Status', statusSelecionado || '—'],
+    ['Horário', (v('hora-inicio') !== '—' && v('hora-fim') !== '—') ? `${v('hora-inicio')} – ${v('hora-fim')}` : '—'],
+  ];
+  body.innerHTML = rows.map(([k,val]) => `
+    <div class="preview-row">
+      <span class="preview-key">${k}</span>
+      <span class="preview-val">${val}</span>
+    </div>`).join('');
+
+  // Thumbnails de assinaturas
+  const conf = document.getElementById('sig-confirm');
+  const makeThumb = (canvasId, label) => {
+    const src = document.getElementById(canvasId).toDataURL();
+    return `<div style="flex:1;min-width:120px">
+      <div style="font-size:11px;font-weight:700;color:var(--cinza-texto);margin-bottom:4px;text-transform:uppercase">${label}</div>
+      <img src="${src}" style="width:100%;border:1px solid var(--cinza-claro);border-radius:2px;background:white" />
+    </div>`;
+  };
+  conf.innerHTML = makeThumb('sig-cliente','Cliente') + makeThumb('sig-tecnico','Técnico');
+}
+
+// ─── GERAR PDF ────────────────────────────
+async function gerarPDF() {
+  const btn = document.querySelector('#page-3 .btn-success');
+  btn.textContent = '⏳ Gerando PDF...';
+  btn.disabled = true;
+
+  await new Promise(r => setTimeout(r, 100));
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  const W = 210, mg = 15;
+  let y = 0;
+
+  // ── Cabeçalho ──────────────────────────
+  doc.setFillColor(15, 98, 254);
+  doc.rect(0, 0, W, 28, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('ORDEM DE SERVIÇO', mg, 12);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text(osNum, mg, 19);
+  doc.text('Data: ' + new Date(v('tec-data') + 'T12:00').toLocaleDateString('pt-BR'), W - mg, 19, {align:'right'});
+  y = 35;
+
+  // ── Seção ──────────────────────────────
+  function secao(titulo) {
+    doc.setFillColor(22, 22, 22);
+    doc.rect(mg, y, W - mg * 2, 7, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.text(titulo, mg + 3, y + 5);
+    y += 10;
+    doc.setTextColor(0, 0, 0);
+  }
+
+  function linha(chave, valor) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(82, 82, 82);
+    doc.text(chave + ':', mg + 2, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(22, 22, 22);
+    const lines = doc.splitTextToSize(valor || '—', W - mg * 2 - 45);
+    doc.text(lines, mg + 45, y);
+    y += Math.max(lines.length * 5, 6);
+  }
+
+  function espaco(n = 4) { y += n; }
+
+  // ── DADOS DO CLIENTE ──
+  secao('DADOS DO CLIENTE');
+  linha('Nome / Empresa', v('cliente-nome'));
+  linha('Documento', v('cliente-doc'));
+  linha('Telefone', v('cliente-tel'));
+  linha('Endereço', v('cliente-end'));
+  espaco();
+
+  // ── DADOS DO TÉCNICO ──
+  secao('TÉCNICO RESPONSÁVEL');
+  linha('Nome', v('tec-nome'));
+  linha('Matrícula', v('tec-matricula'));
+  linha('Data de Atendimento', new Date(v('tec-data') + 'T12:00').toLocaleDateString('pt-BR'));
+  const ini = v('hora-inicio'), fim = v('hora-fim');
+  if (ini !== '—' || fim !== '—') linha('Horário', `${ini} – ${fim}`);
+  espaco();
+
+  // ── SERVIÇO ──
+  secao('SERVIÇO EXECUTADO');
+  linha('Tipo', v('serv-tipo'));
+  linha('Equipamento / Local', v('serv-equip'));
+  linha('Status', statusSelecionado);
+  espaco(2);
+  if (v('serv-problema') !== '—') {
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(82,82,82);
+    doc.text('Problema Relatado:', mg + 2, y); y += 5;
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(22,22,22);
+    const lp = doc.splitTextToSize(v('serv-problema'), W - mg * 2 - 4);
+    doc.text(lp, mg + 2, y); y += lp.length * 5 + 3;
+  }
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(82,82,82);
+  doc.text('Serviço Executado:', mg + 2, y); y += 5;
+  doc.setFont('helvetica', 'normal'); doc.setTextColor(22,22,22);
+  const le = doc.splitTextToSize(v('serv-executado'), W - mg * 2 - 4);
+  doc.text(le, mg + 2, y); y += le.length * 5 + 3;
+
+  if (v('serv-pecas') !== '—') {
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(82,82,82);
+    doc.text('Peças/Materiais:', mg + 2, y); y += 5;
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(22,22,22);
+    const lmat = doc.splitTextToSize(v('serv-pecas'), W - mg * 2 - 4);
+    doc.text(lmat, mg + 2, y); y += lmat.length * 5;
+  }
+  espaco(6);
+
+  // ── ASSINATURAS ──
+  secao('ASSINATURAS');
+  espaco(2);
+  const sigW = (W - mg * 2 - 10) / 2;
+  const sigH = 28;
+
+  // Cliente
+  doc.setFillColor(250,250,250);
+  doc.setDrawColor(200,200,200);
+  doc.rect(mg, y, sigW, sigH);
+  const sigCliente = document.getElementById('sig-cliente').toDataURL('image/png');
+  doc.addImage(sigCliente, 'PNG', mg + 1, y + 1, sigW - 2, sigH - 2);
+
+  // Técnico
+  doc.rect(mg + sigW + 10, y, sigW, sigH);
+  const sigTecnico = document.getElementById('sig-tecnico').toDataURL('image/png');
+  doc.addImage(sigTecnico, 'PNG', mg + sigW + 11, y + 1, sigW - 2, sigH - 2);
+
+  y += sigH + 4;
+  doc.setFontSize(8);
+  doc.setTextColor(82,82,82);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Assinatura do Cliente', mg + sigW / 2, y, {align:'center'});
+  doc.text('Assinatura do Técnico', mg + sigW + 10 + sigW / 2, y, {align:'center'});
+  y += 5;
+  doc.setFont('helvetica', 'normal');
+  doc.text(v('cliente-nome'), mg + sigW / 2, y, {align:'center'});
+  doc.text(v('tec-nome'), mg + sigW + 10 + sigW / 2, y, {align:'center'});
+
+  // ── Rodapé ──
+  y = 285;
+  doc.setFillColor(240,240,240);
+  doc.rect(0, y, W, 12, 'F');
+  doc.setFontSize(7.5);
+  doc.setTextColor(130,130,130);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`${osNum} · Gerado em ${new Date().toLocaleString('pt-BR')}`, W/2, y+7, {align:'center'});
+
+  // ── Salva ──
+  doc.save(`${osNum}_${v('cliente-nome').replace(/\s+/g,'_')}.pdf`);
+
+  btn.disabled = false;
+  btn.textContent = '📄 Gerar PDF e Finalizar';
+
+  document.getElementById('os-final-num').textContent = osNum;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-success').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ─── NOVA OS ──────────────────────────────
+function novaOS() { location.reload(); }
+
+// ─── TOAST ────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
