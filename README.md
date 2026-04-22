@@ -18,7 +18,7 @@ Formulário web responsivo para técnicos preencherem o relatório de serviço t
 - **Relatório de inspeção:** parâmetros técnicos com valores inicial e final (pressão, temperatura, corrente, tensão, etc.)
 - **Filtro de ar e óleo compressor:** campos dedicados para registro de estado/troca
 - **Recomendações:** campo livre para orientações ao cliente
-- **Fotos do equipamento:** suporte a até 3 fotos tiradas na hora ou importadas da galeria, incluídas automaticamente no PDF gerado
+- **Fotos do equipamento:** até 3 fotos por relatório, tiradas diretamente pela câmera do celular e incluídas automaticamente no PDF gerado
 - **Assinaturas digitais** do técnico e do cliente via toque ou mouse (canvas de alta resolução)
 - **Geração de PDF automática** com jsPDF, fiel ao layout do relatório original
 - **100% offline** após o primeiro carregamento — sem backend, sem banco de dados
@@ -79,7 +79,7 @@ Formulário web responsivo para técnicos preencherem o relatório de serviço t
 - Campo livre para orientações ao cliente
 
 **Fotos do Equipamento**
-- Até 3 fotos por relatório (câmera ou galeria)
+- Até 3 fotos por relatório, tiradas diretamente pela câmera do celular e incluídas automaticamente no PDF gerado
 - Incluídas automaticamente no PDF gerado
 
 **Assinaturas Digitais**
