@@ -1,108 +1,152 @@
-# 🔧 Ordem de Serviço — Relatório Técnico de Campo
+# Relatório de Serviço Técnico
 
-Formulário web responsivo para técnicos registrarem atendimentos em campo, coletar assinaturas digitais do cliente e do técnico, e gerar um PDF profissional automaticamente — tudo sem depender de internet ou aplicativo instalado.
+Formulário web responsivo para técnicos preencherem o relatório de serviço técnico fiel ao documento original da empresa, coletar assinaturas digitais do cliente e do técnico, e gerar automaticamente um PDF profissional — tudo sem depender de internet ou aplicativo instalado.
 
 ---
 
-## ✨ Funcionalidades
+## Funcionalidades
 
-- **Fluxo em 4 etapas guiadas:** Dados do cliente e técnico → Detalhes do serviço → Assinaturas digitais → Revisão e geração do PDF
-- **Validação em tempo real** com alertas toast antes de avançar cada etapa
-- **Assinatura digital via toque ou mouse** para cliente e técnico, com canvas de alta resolução
-- **Status do atendimento** com seleção visual: Concluído, Pendente ou Não Resolvido
-- **Geração de PDF A4** com cabeçalho, seções organizadas, miniaturas das assinaturas e rodapé com número da OS e timestamp
-- **Número de OS automático** gerado a cada abertura do formulário (ex.: `OS-4271`)
+- **Formulário único:** uma única tela com todos os campos do relatório original, sem etapas ou paginação
+- **Dados do cliente:** nome/empresa, endereço, telefone, contato
+- **Dados do equipamento:** tipo de máquina, número de série, nº de série do motor, nº de série do elemento e horas de operação
+- **Tipo de serviço:** checkboxes (Manutenção Preventiva, Manutenção Corretiva, Instalação, Configuração, Visita Técnica, Outro)
+- **Tabela de deslocamento:** registro de horários e percurso do técnico
+- **Ocorrência informada:** descrição do problema relatado pelo cliente
+- **Falha encontrada:** diagnóstico do técnico
+- **Serviço executado:** descrição detalhada do serviço realizado
+- **Material utilizado:** tabela com código, descrição e quantidade de cada item
+- **Relatório de inspeção:** parâmetros técnicos com valores inicial e final (pressão, temperatura, corrente, tensão, etc.)
+- **Filtro de ar e óleo compressor:** campos dedicados para registro de estado/troca
+- **Recomendações:** campo livre para orientações ao cliente
+- **Assinaturas digitais** do técnico e do cliente via toque ou mouse (canvas de alta resolução)
+- **Geração de PDF automática** com jsPDF, fiel ao layout do relatório original
 - **100% offline** após o primeiro carregamento — sem backend, sem banco de dados
-- **Design responsivo** otimizado para smartphones (viewport fixo, touch-action configurado)
 
 ---
 
-## 📋 Campos do Formulário
+## Campos do Formulário
 
-**Etapa 1 — Dados**
-- Nome / Empresa do cliente *(obrigatório)*
-- Telefone e CPF/CNPJ
+**Dados do Cliente**
+- Nome / Empresa *(obrigatório)*
 - Endereço *(obrigatório)*
-- Nome do técnico *(obrigatório)*, matrícula e data *(obrigatório)*
+- Telefone e Contato
 
-**Etapa 2 — Serviço**
-- Tipo de serviço: Instalação, Manutenção Preventiva, Manutenção Corretiva, Configuração, Visita Técnica ou Outro *(obrigatório)*
-- Equipamento / local atendido
+**Dados do Equipamento**
+- Máquina / Modelo *(obrigatório)*
+- Nº de Série
+- Nº de Série do Motor
+- Nº de Série do Elemento
+- Horas de Operação
+
+**Tipo de Serviço** *(checkboxes — obrigatório)*
+- Manutenção Preventiva
+- Manutenção Corretiva
+- Instalação
+- Configuração
+- Visita Técnica
+- Outro
+
+**Tabela de Deslocamento**
+- Data, hora de saída, hora de chegada, km rodado ou local atendido
+
+**Ocorrência Informada**
 - Descrição do problema relatado pelo cliente
-- Serviço executado *(obrigatório)*
-- Peças e materiais utilizados
-- Status do atendimento *(obrigatório)*
-- Horário de início e término
 
-**Etapa 3 — Assinaturas**
-- Assinatura digital do cliente
-- Assinatura digital do técnico
+**Falha Encontrada**
+- Diagnóstico técnico da causa raiz
 
-**Etapa 4 — Revisar e Gerar PDF**
-- Resumo completo da OS
-- Miniaturas das assinaturas para conferência
-- Botão para gerar e baixar o PDF
+**Serviço Executado**
+- Descrição detalhada de tudo que foi realizado
+
+**Material Utilizado**
+| Código | Descrição | Quantidade |
+|--------|-----------|------------|
+| ...    | ...       | ...        |
+
+**Relatório de Inspeção**
+| Parâmetro | Valor Inicial | Valor Final |
+|-----------|---------------|-------------|
+| ...       | ...           | ...         |
+
+**Filtro de Ar**
+- Estado / Observação
+
+**Óleo Compressor**
+- Estado / Observação / Troca
+
+**Recomendações**
+- Campo livre para orientações ao cliente
+
+**Assinaturas Digitais**
+- Assinatura do técnico
+- Assinatura do cliente
 
 ---
 
-## 🚀 Como usar
+## Como usar
 
-1. Abra o arquivo `ordem-de-servico.html` diretamente no navegador do celular ou computador — **não é necessário servidor**
-2. Preencha as 4 etapas do formulário
-3. Colete a assinatura do cliente e assine como técnico
-4. Revise os dados e clique em **"Gerar PDF e Finalizar"**
-5. O PDF é baixado automaticamente com o nome `OS-XXXX_NomeCliente.pdf`
-
-> **Dica:** Salve o arquivo na tela inicial do celular (PWA-like) para acesso rápido em campo.
+1. Abra o arquivo `relatorio-tecnico.html` diretamente no navegador do celular ou computador — **não é necessário servidor**
+2. Preencha todos os campos do formulário em uma única tela
+3. Adicione os materiais utilizados e os parâmetros do relatório de inspeção
+4. Colete a assinatura digital do cliente e assine como técnico
+5. Clique em **"Gerar PDF"** — o documento é baixado automaticamente
 
 ---
 
-## 🛠️ Tecnologias
+## Tecnologias
 
 | Tecnologia | Uso |
 |---|---|
 | HTML5 | Estrutura e semântica |
 | CSS3 | Layout responsivo, variáveis, animações |
 | JavaScript (ES6+) | Lógica, validação, canvas e geração do PDF |
-| [jsPDF 2.5.1](https://github.com/parallax/jsPDF) | Geração do documento PDF no navegador |
+| [jsPDF](https://github.com/parallax/jsPDF) | Geração do documento PDF no navegador |
 | Google Fonts — IBM Plex Sans / Mono | Tipografia |
 
 Nenhum framework, nenhuma dependência local. Um único arquivo `.html`.
 
 ---
 
-## 📄 Estrutura do PDF gerado
+## Estrutura do PDF gerado
 
 ```
-┌─────────────────────────────────────┐
-│  ORDEM DE SERVIÇO   OS-XXXX  Data   │  ← Cabeçalho azul
-├─────────────────────────────────────┤
-│  DADOS DO CLIENTE                   │
-│  TÉCNICO RESPONSÁVEL                │
-│  SERVIÇO EXECUTADO                  │
-│  ASSINATURAS  [Cliente] [Técnico]   │
-├─────────────────────────────────────┤
-│  OS-XXXX · Gerado em DD/MM/AAAA HH:MM │  ← Rodapé
-└─────────────────────────────────────┘
+┌──────────────────────────────────────┐
+│  RELATÓRIO DE SERVIÇO TÉCNICO        │  ← Cabeçalho com logo e data
+├──────────────────────────────────────┤
+│  DADOS DO CLIENTE                    │
+│  DADOS DO EQUIPAMENTO                │
+│  TIPO DE SERVIÇO                     │
+│  TABELA DE DESLOCAMENTO              │
+│  OCORRÊNCIA INFORMADA                │
+│  FALHA ENCONTRADA                    │
+│  SERVIÇO EXECUTADO                   │
+│  MATERIAL UTILIZADO                  │
+│  RELATÓRIO DE INSPEÇÃO               │
+│  FILTRO DE AR / ÓLEO COMPRESSOR      │
+│  RECOMENDAÇÕES                       │
+│  ASSINATURAS [Técnico]  [Cliente]    │
+└──────────────────────────────────────┘
+│  Gerado em DD/MM/AAAA HH:MM          │  ← Rodapé
+└──────────────────────────────────────┘
 ```
 
 ---
 
-## 📁 Estrutura do repositório
+## Estrutura do repositório
 
 ```
 relatorio-tecnico/
-└── ordem-de-servico.html   # Aplicação completa (HTML + CSS + JS)
+└── relatorio-tecnico.html   # Aplicação completa (HTML + CSS + JS)
 ```
 
 ---
 
-## 🔒 Privacidade
+## Privacidade
 
 Todos os dados são processados **localmente no navegador**. Nenhuma informação é enviada para servidores externos. O PDF é gerado e salvo diretamente no dispositivo do usuário.
 
 ---
 
-## 📌 Compatibilidade
+## Compatibilidade
 
 Testado nos navegadores móveis modernos: Chrome para Android, Safari para iOS e Firefox. Requer conexão à internet apenas no primeiro acesso, para carregar a fonte IBM Plex e a biblioteca jsPDF via CDN.
