@@ -18,6 +18,7 @@ Formulário web responsivo para técnicos preencherem o relatório de serviço t
 - **Relatório de inspeção:** parâmetros técnicos com valores inicial e final (pressão, temperatura, corrente, tensão, etc.)
 - **Filtro de ar e óleo compressor:** campos dedicados para registro de estado/troca
 - **Recomendações:** campo livre para orientações ao cliente
+- **Fotos do equipamento:** suporte a até 3 fotos tiradas na hora ou importadas da galeria, incluídas automaticamente no PDF gerado
 - **Assinaturas digitais** do técnico e do cliente via toque ou mouse (canvas de alta resolução)
 - **Geração de PDF automática** com jsPDF, fiel ao layout do relatório original
 - **100% offline** após o primeiro carregamento — sem backend, sem banco de dados
@@ -77,6 +78,10 @@ Formulário web responsivo para técnicos preencherem o relatório de serviço t
 **Recomendações**
 - Campo livre para orientações ao cliente
 
+**Fotos do Equipamento**
+- Até 3 fotos por relatório (câmera ou galeria)
+- Incluídas automaticamente no PDF gerado
+
 **Assinaturas Digitais**
 - Assinatura do técnico
 - Assinatura do cliente
@@ -85,11 +90,12 @@ Formulário web responsivo para técnicos preencherem o relatório de serviço t
 
 ## Como usar
 
-1. Abra o arquivo `relatorio-tecnico.html` diretamente no navegador do celular ou computador — **não é necessário servidor**
+1. Abra o arquivo `ordem-de-servico.html` diretamente no navegador do celular ou computador — **não é necessário servidor**
 2. Preencha todos os campos do formulário em uma única tela
 3. Adicione os materiais utilizados e os parâmetros do relatório de inspeção
-4. Colete a assinatura digital do cliente e assine como técnico
-5. Clique em **"Gerar PDF"** — o documento é baixado automaticamente
+4. Anexe até 3 fotos do equipamento (opcional)
+5. Colete a assinatura digital do cliente e assine como técnico
+6. Clique em **"Gerar PDF"** — o documento é baixado automaticamente com todas as fotos incluídas
 
 ---
 
@@ -124,6 +130,7 @@ Nenhum framework, nenhuma dependência local. Um único arquivo `.html`.
 │  RELATÓRIO DE INSPEÇÃO               │
 │  FILTRO DE AR / ÓLEO COMPRESSOR      │
 │  RECOMENDAÇÕES                       │
+│  FOTOS DO EQUIPAMENTO (até 3)        │
 │  ASSINATURAS [Técnico]  [Cliente]    │
 └──────────────────────────────────────┘
 │  Gerado em DD/MM/AAAA HH:MM          │  ← Rodapé
@@ -136,7 +143,7 @@ Nenhum framework, nenhuma dependência local. Um único arquivo `.html`.
 
 ```
 relatorio-tecnico/
-└── relatorio-tecnico.html   # Aplicação completa (HTML + CSS + JS)
+└── ordem-de-servico.html   # Aplicação completa (HTML + CSS + JS)
 ```
 
 ---
