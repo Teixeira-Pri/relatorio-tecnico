@@ -3,816 +3,607 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Ordem de Serviço</title>
+<title>Relatório de Serviço Técnico</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --azul: #0f62fe;
-    --azul-escuro: #0043ce;
-    --fundo: #f4f4f4;
-    --branco: #ffffff;
-    --cinza-claro: #e0e0e0;
-    --cinza-medio: #a8a8a8;
-    --cinza-texto: #525252;
-    --preto: #161616;
-    --verde: #24a148;
-    --vermelho: #da1e28;
-    --amarelo: #f1c21b;
-  }
+body {
+  font-family: Arial, sans-serif;
+  background: #e8e8e8;
+  min-height: 100vh;
+  padding: 12px;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+.page-title {
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  background: #fff;
+  border: 1px solid #333;
+  border-bottom: none;
+  padding: 6px;
+  letter-spacing: 1px;
+  max-width: 700px;
+  margin: 0 auto;
+}
 
-  body {
-    font-family: 'IBM Plex Sans', sans-serif;
-    background: var(--fundo);
-    color: var(--preto);
-    min-height: 100vh;
-    padding-bottom: 40px;
-  }
+.form-wrap {
+  background: #fff;
+  border: 1px solid #333;
+  max-width: 700px;
+  margin: 0 auto;
+}
 
-  /* HEADER */
-  .header {
-    background: var(--azul);
-    color: white;
-    padding: 20px 16px 16px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  }
-  .header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-  .header-icon {
-    width: 36px; height: 36px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-  }
-  .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
-  .header p { font-size: 12px; opacity: 0.75; margin-left: 46px; }
+.section { border-bottom: 1px solid #333; }
+.section:last-child { border-bottom: none; }
 
-  /* STEPS */
-  .steps {
-    display: flex;
-    background: var(--azul-escuro);
-    padding: 0 16px;
-  }
-  .step-btn {
-    flex: 1; padding: 10px 4px;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 11px; font-weight: 600;
-    color: rgba(255,255,255,0.5);
-    background: none; border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer; transition: all .2s;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .step-btn.active { color: white; border-bottom-color: var(--amarelo); }
-  .step-btn.done { color: rgba(255,255,255,0.75); }
+.field-row {
+  display: flex;
+  border-bottom: 1px solid #aaa;
+  flex-wrap: wrap;
+}
+.field-row:last-child { border-bottom: none; }
 
-  /* CONTAINER */
-  .container { padding: 16px; max-width: 480px; margin: 0 auto; }
+.field {
+  flex: 1;
+  min-width: 100px;
+  border-right: 1px solid #aaa;
+  padding: 3px 5px;
+  display: flex;
+  flex-direction: column;
+}
+.field:last-child { border-right: none; }
 
-  /* CARD */
-  .card {
-    background: var(--branco);
-    border-radius: 4px;
-    margin-bottom: 12px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  }
-  .card-header {
-    background: var(--preto);
-    color: white;
-    padding: 10px 14px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .card-body { padding: 14px; }
+.field label {
+  font-size: 9px;
+  color: #333;
+  font-weight: bold;
+  white-space: nowrap;
+}
 
-  /* FORM */
-  .field { margin-bottom: 14px; }
-  .field:last-child { margin-bottom: 0; }
-  label {
-    display: block;
-    font-size: 12px; font-weight: 600;
-    color: var(--cinza-texto);
-    margin-bottom: 4px;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  label .req { color: var(--vermelho); margin-left: 2px; }
-  input, textarea, select {
-    width: 100%;
-    border: 1px solid var(--cinza-claro);
-    border-bottom: 2px solid var(--cinza-medio);
-    border-radius: 0;
-    padding: 10px 12px;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 14px;
-    color: var(--preto);
-    background: #f9f9f9;
-    transition: border-color .2s, background .2s;
-    -webkit-appearance: none;
-  }
-  input:focus, textarea:focus, select:focus {
-    outline: none;
-    border-color: var(--azul);
-    border-bottom-color: var(--azul);
-    background: white;
-    box-shadow: inset 0 0 0 1px var(--azul);
-  }
-  textarea { resize: vertical; min-height: 80px; }
+.field input[type="text"],
+.field input[type="tel"],
+.field input[type="date"],
+.field input[type="time"],
+.field input[type="number"] {
+  border: none;
+  outline: none;
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  width: 100%;
+  padding: 1px 0;
+  background: transparent;
+}
 
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tipo-servico { padding: 6px 8px; border-bottom: 1px solid #aaa; }
+.tipo-servico-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5px;
+}
+.check-item {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; cursor: pointer;
+}
+.check-item input { width: 13px; height: 13px; cursor: pointer; }
 
-  /* STATUS CHIPS */
-  .status-group { display: flex; gap: 8px; flex-wrap: wrap; }
-  .status-chip {
-    padding: 7px 12px;
-    border: 1.5px solid var(--cinza-claro);
-    border-radius: 20px;
-    font-size: 12px; font-weight: 600;
-    cursor: pointer; transition: all .15s;
-    background: white;
-  }
-  .status-chip.selected-verde { background: var(--verde); border-color: var(--verde); color: white; }
-  .status-chip.selected-amarelo { background: var(--amarelo); border-color: var(--amarelo); color: var(--preto); }
-  .status-chip.selected-vermelho { background: var(--vermelho); border-color: var(--vermelho); color: white; }
+.tabela-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 11px; }
+th {
+  background: #f0f0f0;
+  border: 1px solid #aaa;
+  padding: 4px 3px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: bold;
+}
+td { border: 1px solid #aaa; padding: 1px 3px; }
+td input {
+  border: none; outline: none;
+  width: 100%; font-size: 11px;
+  font-family: Arial, sans-serif;
+  background: transparent; padding: 2px 0;
+}
 
-  /* ASSINATURA */
-  .sig-wrap {
-    border: 2px dashed var(--cinza-claro);
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
-    background: #fafafa;
-  }
-  .sig-label-float {
-    position: absolute; top: 8px; left: 10px;
-    font-size: 10px; color: var(--cinza-medio);
-    font-weight: 600; letter-spacing: 1px;
-    text-transform: uppercase; pointer-events: none;
-  }
-  canvas {
-    display: block;
-    width: 100%; height: 130px;
-    cursor: crosshair;
-    touch-action: none;
-  }
-  .sig-actions {
-    display: flex; justify-content: flex-end;
-    padding: 6px 8px;
-    background: white;
-    border-top: 1px solid var(--cinza-claro);
-    gap: 8px;
-  }
-  .sig-status {
-    font-size: 11px; font-weight: 600;
-    padding: 3px 8px; border-radius: 10px;
-    display: none;
-  }
-  .sig-status.ok { background: #defbe6; color: var(--verde); display: inline-block; }
+.field-long { padding: 4px 6px; border-bottom: 1px solid #aaa; }
+.field-long:last-child { border-bottom: none; }
+.field-long label { font-size: 10px; font-weight: bold; color: #333; display: block; margin-bottom: 2px; }
+.field-long textarea {
+  width: 100%; border: none; outline: none;
+  font-family: Arial, sans-serif; font-size: 12px;
+  resize: vertical; min-height: 45px; background: transparent;
+}
 
-  /* BOTÕES */
-  .btn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; padding: 14px;
-    border: none; border-radius: 0;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 14px; font-weight: 700;
-    cursor: pointer; transition: all .15s;
-    letter-spacing: 0.3px;
-  }
-  .btn-primary { background: var(--azul); color: white; }
-  .btn-primary:hover { background: var(--azul-escuro); }
-  .btn-primary:active { transform: scale(0.98); }
-  .btn-success { background: var(--verde); color: white; }
-  .btn-success:hover { background: #1d8a3d; }
-  .btn-outline {
-    background: white; color: var(--azul);
-    border: 2px solid var(--azul);
-  }
-  .btn-sm {
-    padding: 6px 12px; font-size: 12px;
-    width: auto; border-radius: 2px;
-  }
-  .btn-danger-sm {
-    background: none; color: var(--vermelho);
-    border: 1px solid var(--vermelho);
-    padding: 5px 10px; font-size: 11px;
-    width: auto; border-radius: 2px;
-    cursor: pointer; font-family: 'IBM Plex Sans', sans-serif;
-    font-weight: 600;
-  }
+.sec-title {
+  background: #f0f0f0;
+  border-bottom: 1px solid #aaa;
+  padding: 4px 6px;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
 
-  /* PÁGINA ATIVA */
-  .page { display: none; }
-  .page.active { display: block; }
+.inspecao-table th { font-size: 9px; padding: 3px 2px; }
+.inspecao-table td { font-size: 10px; padding: 2px; }
+.inspecao-table td input { font-size: 10px; text-align: center; }
+.param-label { font-weight: normal; text-align: left !important; padding-left: 4px !important; font-size: 10px; }
 
-  /* PREVIEW */
-  .preview-row {
-    display: flex; justify-content: space-between;
-    padding: 9px 0;
-    border-bottom: 1px solid var(--fundo);
-    font-size: 13px;
-  }
-  .preview-row:last-child { border-bottom: none; }
-  .preview-key { color: var(--cinza-texto); font-weight: 500; font-size: 12px; }
-  .preview-val { font-weight: 600; text-align: right; max-width: 60%; }
+.filtro-oleo { display: flex; border-bottom: 1px solid #aaa; }
+.filtro-box, .oleo-box { flex: 1; border-right: 1px solid #aaa; padding: 6px; }
+.oleo-box { border-right: none; }
+.box-title { font-size: 10px; font-weight: bold; margin-bottom: 5px; text-align: center; }
+.filtro-options { display: flex; gap: 14px; justify-content: center; }
+.filtro-options label { font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+.oleo-row { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+.oleo-row label { font-size: 10px; min-width: 40px; }
+.oleo-row input { border: none; border-bottom: 1px solid #aaa; outline: none; font-size: 11px; flex: 1; background: transparent; }
 
-  /* SUCESSO */
-  .success-screen {
-    text-align: center; padding: 40px 20px;
-  }
-  .success-icon {
-    width: 72px; height: 72px;
-    background: var(--verde);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 36px; margin: 0 auto 20px;
-    animation: pop .4s ease;
-  }
-  @keyframes pop {
-    0% { transform: scale(0); }
-    70% { transform: scale(1.15); }
-    100% { transform: scale(1); }
-  }
-  .success-screen h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-  .success-screen p { color: var(--cinza-texto); font-size: 14px; margin-bottom: 24px; }
+.assinaturas { display: flex; }
+.assinatura-box { flex: 1; border-right: 1px solid #aaa; padding: 6px; }
+.assinatura-box:last-child { border-right: none; }
+.assinatura-box .box-title { font-size: 10px; font-weight: bold; margin-bottom: 5px; }
+.nome-linha { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+.nome-linha label { font-size: 10px; white-space: nowrap; }
+.nome-linha input { border: none; border-bottom: 1px solid #333; outline: none; flex: 1; font-size: 11px; background: transparent; }
+.sig-label { font-size: 10px; margin-bottom: 3px; }
+.sig-canvas-wrap { border: 1px dashed #aaa; background: #fafafa; }
+.sig-canvas-wrap canvas { display: block; width: 100%; height: 80px; cursor: crosshair; touch-action: none; }
+.sig-clear { font-size: 9px; color: #999; cursor: pointer; text-align: right; padding: 2px 4px; background: #f5f5f5; border-top: 1px solid #eee; }
+.sig-clear:hover { color: #c00; }
 
-  .os-number {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 28px; font-weight: 600;
-    color: var(--azul); letter-spacing: 2px;
-    background: #edf5ff;
-    padding: 12px 20px;
-    border-radius: 4px;
-    display: inline-block;
-    margin-bottom: 24px;
-  }
+.btn-gerar {
+  display: block; width: 100%; max-width: 700px;
+  margin: 12px auto 0; padding: 14px;
+  background: #1a1a1a; color: white;
+  font-size: 14px; font-weight: bold;
+  font-family: Arial, sans-serif;
+  border: none; cursor: pointer; letter-spacing: 1px;
+}
+.btn-gerar:hover { background: #333; }
 
-  /* NOTIFICAÇÃO */
-  .toast {
-    position: fixed; bottom: 20px; left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--preto); color: white;
-    padding: 12px 20px; border-radius: 4px;
-    font-size: 13px; font-weight: 500;
-    transition: transform .3s; z-index: 999;
-    white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
+.success-screen {
+  display: none; text-align: center;
+  padding: 40px 20px; background: white;
+  max-width: 700px; margin: 0 auto;
+  border: 1px solid #333;
+}
+.success-screen h2 { font-size: 20px; margin-bottom: 8px; }
+.success-screen p { font-size: 13px; color: #555; margin-bottom: 20px; }
+.btn-nova { padding: 10px 24px; background: #1a1a1a; color: white; border: none; cursor: pointer; font-family: Arial, sans-serif; font-size: 13px; }
 
-  .badge {
-    background: var(--amarelo);
-    color: var(--preto);
-    font-size: 10px; font-weight: 700;
-    padding: 2px 6px; border-radius: 10px;
-    margin-left: 4px;
-  }
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a1a1a; color: white; padding: 10px 18px; font-size: 12px; transition: transform .3s; z-index: 999; white-space: nowrap; }
+.toast.show { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-top">
-    <div class="header-icon">🔧</div>
-    <h1>Ordem de Serviço</h1>
+<div class="page-title">RELATÓRIO DE SERVIÇO TÉCNICO</div>
+
+<div class="form-wrap" id="formulario">
+
+  <!-- CLIENTE -->
+  <div class="section">
+    <div class="field-row">
+      <div class="field"><label>CLIENTE</label><input type="text" id="cliente" /></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>ENDEREÇO</label><input type="text" id="endereco" /></div>
+    </div>
+    <div class="field-row">
+      <div class="field" style="flex:3"><label>CIDADE</label><input type="text" id="cidade" /></div>
+      <div class="field" style="flex:0.5;min-width:50px"><label>U.F.</label><input type="text" id="uf" maxlength="2" /></div>
+      <div class="field" style="flex:1"><label>CEP</label><input type="text" id="cep" /></div>
+    </div>
+
   </div>
-  <p id="os-id-header">Nova OS — <span id="data-hora-header"></span></p>
-</div>
 
-<div class="steps">
-  <button class="step-btn active" onclick="goTo(0)">1 · Dados</button>
-  <button class="step-btn" onclick="goTo(1)">2 · Serviço</button>
-  <button class="step-btn" onclick="goTo(2)">3 · Assinaturas</button>
-  <button class="step-btn" onclick="goTo(3)">4 · Revisar</button>
-</div>
-
-<!-- ============ PÁGINA 1: DADOS ============ -->
-<div class="page active" id="page-0">
-  <div class="container">
-
-    <div class="card">
-      <div class="card-header">🏢 Cliente</div>
-      <div class="card-body">
-        <div class="field">
-          <label>Nome / Empresa <span class="req">*</span></label>
-          <input type="text" id="cliente-nome" placeholder="Ex: João Silva / Tech Ltda" />
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Telefone</label>
-            <input type="tel" id="cliente-tel" placeholder="(11) 99999-9999" />
-          </div>
-          <div class="field">
-            <label>CPF / CNPJ</label>
-            <input type="text" id="cliente-doc" placeholder="000.000.000-00" />
-          </div>
-        </div>
-        <div class="field">
-          <label>Endereço <span class="req">*</span></label>
-          <input type="text" id="cliente-end" placeholder="Rua, número, bairro, cidade" />
-        </div>
-      </div>
+  <!-- EQUIPAMENTO -->
+  <div class="section">
+    <div class="field-row">
+      <div class="field" style="flex:2"><label>MÁQUINA</label><input type="text" id="maquina" /></div>
+      <div class="field" style="flex:1.5"><label>Nº SÉRIE</label><input type="text" id="nserie" /></div>
+      <div class="field" style="flex:1.5"><label>Nº SÉRIE MOTOR</label><input type="text" id="nserie-motor" /></div>
     </div>
-
-    <div class="card">
-      <div class="card-header">👷 Técnico Responsável</div>
-      <div class="card-body">
-        <div class="field">
-          <label>Nome do Técnico <span class="req">*</span></label>
-          <input type="text" id="tec-nome" placeholder="Seu nome completo" />
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Matrícula</label>
-            <input type="text" id="tec-matricula" placeholder="TEC-001" />
-          </div>
-          <div class="field">
-            <label>Data <span class="req">*</span></label>
-            <input type="date" id="tec-data" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn btn-primary" onclick="nextPage(0)">
-      Próximo: Dados do Serviço →
-    </button>
-  </div>
-</div>
-
-<!-- ============ PÁGINA 2: SERVIÇO ============ -->
-<div class="page" id="page-1">
-  <div class="container">
-
-    <div class="card">
-      <div class="card-header">⚙️ Detalhes do Serviço</div>
-      <div class="card-body">
-        <div class="field">
-          <label>Tipo de Serviço <span class="req">*</span></label>
-          <select id="serv-tipo">
-            <option value="">Selecione...</option>
-            <option>Instalação</option>
-            <option>Manutenção Preventiva</option>
-            <option>Manutenção Corretiva</option>
-            <option>Configuração</option>
-            <option>Visita Técnica</option>
-            <option>Outro</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Equipamento / Local</label>
-          <input type="text" id="serv-equip" placeholder="Ex: Servidor Dell, Câmera IP, Ar-condicionado" />
-        </div>
-        <div class="field">
-          <label>Descrição do Problema Relatado</label>
-          <textarea id="serv-problema" placeholder="O que o cliente descreveu antes do atendimento..."></textarea>
-        </div>
-        <div class="field">
-          <label>Serviço Executado <span class="req">*</span></label>
-          <textarea id="serv-executado" placeholder="Descreva detalhadamente o que foi feito..." style="min-height:100px"></textarea>
-        </div>
-        <div class="field">
-          <label>Peças / Materiais Utilizados</label>
-          <textarea id="serv-pecas" placeholder="Ex: 2x cabo UTP cat6, 1x switch 8p..."></textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">📊 Status do Atendimento</div>
-      <div class="card-body">
-        <div class="status-group" id="status-group">
-          <div class="status-chip" onclick="selectStatus(this,'verde')">✅ Concluído</div>
-          <div class="status-chip" onclick="selectStatus(this,'amarelo')">⚠️ Pendente</div>
-          <div class="status-chip" onclick="selectStatus(this,'vermelho')">❌ Não Resolvido</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">⏱️ Tempo de Atendimento</div>
-      <div class="card-body">
-        <div class="field-row">
-          <div class="field">
-            <label>Início</label>
-            <input type="time" id="hora-inicio" />
-          </div>
-          <div class="field">
-            <label>Término</label>
-            <input type="time" id="hora-fim" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:10px">
-      <button class="btn btn-outline" onclick="goTo(0)" style="flex:1">← Voltar</button>
-      <button class="btn btn-primary" onclick="nextPage(1)" style="flex:2">Próximo: Assinaturas →</button>
+    <div class="field-row">
+      <div class="field" style="flex:2"><label>Nº SÉRIE ELEMENTO</label><input type="text" id="nserie-elem" /></div>
+      <div class="field"><label>HORAS</label><input type="number" id="horas" /></div>
+      <div class="field"><label>HORAS EM CARGA</label><input type="number" id="horas-carga" /></div>
     </div>
   </div>
-</div>
 
-<!-- ============ PÁGINA 3: ASSINATURAS ============ -->
-<div class="page" id="page-2">
-  <div class="container">
-
-    <div class="card">
-      <div class="card-header">✍️ Assinatura do Cliente</div>
-      <div class="card-body">
-        <p style="font-size:12px;color:var(--cinza-texto);margin-bottom:10px">
-          Peça ao cliente para assinar no campo abaixo:
-        </p>
-        <div class="sig-wrap">
-          <span class="sig-label-float">ASSINE AQUI</span>
-          <canvas id="sig-cliente" width="800" height="260"></canvas>
-          <div class="sig-actions">
-            <span class="sig-status" id="status-cliente">✓ Assinado</span>
-            <button class="btn-danger-sm" onclick="clearSig('sig-cliente','status-cliente')">Limpar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">✍️ Assinatura do Técnico</div>
-      <div class="card-body">
-        <p style="font-size:12px;color:var(--cinza-texto);margin-bottom:10px">
-          Agora assine como técnico responsável:
-        </p>
-        <div class="sig-wrap">
-          <span class="sig-label-float">ASSINE AQUI</span>
-          <canvas id="sig-tecnico" width="800" height="260"></canvas>
-          <div class="sig-actions">
-            <span class="sig-status" id="status-tecnico">✓ Assinado</span>
-            <button class="btn-danger-sm" onclick="clearSig('sig-tecnico','status-tecnico')">Limpar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:10px">
-      <button class="btn btn-outline" onclick="goTo(1)" style="flex:1">← Voltar</button>
-      <button class="btn btn-primary" onclick="nextPage(2)" style="flex:2">Próximo: Revisar →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============ PÁGINA 4: REVISÃO ============ -->
-<div class="page" id="page-3">
-  <div class="container">
-
-    <div class="card">
-      <div class="card-header">👁 Resumo da OS</div>
-      <div class="card-body" id="preview-body">
-        <!-- preenchido via JS -->
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">✅ Confirmação de Assinaturas</div>
-      <div class="card-body">
-        <div id="sig-confirm" style="display:flex;gap:12px;flex-wrap:wrap"></div>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:10px;margin-bottom:10px">
-      <button class="btn btn-outline" onclick="goTo(2)" style="flex:1">← Voltar</button>
-    </div>
-
-    <button class="btn btn-success" onclick="gerarPDF()" style="font-size:15px;padding:16px">
-      📄 Gerar PDF e Finalizar
-    </button>
-  </div>
-</div>
-
-<!-- ============ TELA SUCESSO ============ -->
-<div class="page" id="page-success">
-  <div class="container">
-    <div class="card">
-      <div class="success-screen">
-        <div class="success-icon">✓</div>
-        <h2>OS Finalizada!</h2>
-        <p>O documento foi gerado com sucesso.<br>Compartilhe com seu gestor.</p>
-        <div class="os-number" id="os-final-num">OS #0000</div>
-        <button class="btn btn-primary" onclick="novaOS()" style="margin-bottom:10px">+ Nova Ordem de Serviço</button>
+  <!-- TIPO SERVIÇO -->
+  <div class="section">
+    <div class="tipo-servico">
+      <div class="tipo-servico-grid">
+        <label class="check-item"><input type="checkbox" id="t1"> Manutenção Corretiva</label>
+        <label class="check-item"><input type="checkbox" id="t2"> Partida Técnica</label>
+        <label class="check-item"><input type="checkbox" id="t3"> Garantia</label>
+        <label class="check-item"><input type="checkbox" id="t4"> Contrato de Manutenção</label>
+        <label class="check-item"><input type="checkbox" id="t5"> Preventiva</label>
+        <label class="check-item"><input type="checkbox" id="t6"> Cortesia</label>
       </div>
     </div>
   </div>
+
+  <!-- DESLOCAMENTO -->
+  <div class="section">
+    <div class="tabela-wrap">
+      <table id="tabela-desloc">
+        <thead>
+          <tr>
+            <th>Data</th><th>Saída</th><th>Chegada</th>
+            <th>Saída</th><th>Chegada</th><th>km</th><th>km</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="date" /></td><td><input type="time" /></td><td><input type="time" /></td>
+            <td><input type="time" /></td><td><input type="time" /></td><td><input type="number" /></td><td><input type="number" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TEXTOS -->
+  <div class="section">
+    <div class="field-long"><label>Ocorrência Informada:</label><textarea id="ocorrencia"></textarea></div>
+    <div class="field-long"><label>Falha Encontrada:</label><textarea id="falha"></textarea></div>
+    <div class="field-long"><label>Serviço Executado:</label><textarea id="servico" style="min-height:70px"></textarea></div>
+  </div>
+
+  <!-- MATERIAL -->
+  <div class="section">
+    <div class="sec-title">Material Utilizado</div>
+    <div class="tabela-wrap">
+      <table>
+        <thead><tr><th style="width:25%">Código</th><th style="width:55%">Descrição</th><th style="width:20%">Quantidade</th></tr></thead>
+        <tbody id="tbody-material">
+          <tr><td><input type="text" class="m-cod"/></td><td><input type="text" class="m-desc"/></td><td><input type="number" class="m-qtd"/></td></tr>
+          <tr><td><input type="text" class="m-cod"/></td><td><input type="text" class="m-desc"/></td><td><input type="number" class="m-qtd"/></td></tr>
+          <tr><td><input type="text" class="m-cod"/></td><td><input type="text" class="m-desc"/></td><td><input type="number" class="m-qtd"/></td></tr>
+          <tr><td><input type="text" class="m-cod"/></td><td><input type="text" class="m-desc"/></td><td><input type="number" class="m-qtd"/></td></tr>
+          <tr><td><input type="text" class="m-cod"/></td><td><input type="text" class="m-desc"/></td><td><input type="number" class="m-qtd"/></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- INSPEÇÃO -->
+  <div class="section">
+    <div class="sec-title">Relatório de Inspeção</div>
+    <div class="tabela-wrap">
+      <table class="inspecao-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width:38%;text-align:left;padding-left:4px"></th>
+            <th colspan="2">Parâmetro Inicial</th>
+            <th colspan="2">Parâmetro Final</th>
+          </tr>
+          <tr><th>Carga</th><th>Alívio</th><th>Carga</th><th>Alívio</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="param-label">Pressão de Trabalho</td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td></tr>
+          <tr><td class="param-label">Temperatura Ambiente</td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td></tr>
+          <tr><td class="param-label">Temp. Trabalho Compressor</td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td></tr>
+          <tr><td class="param-label">Reg. relé térmico motor principal</td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td></tr>
+          <tr><td class="param-label">Amp. Motor principal</td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td></tr>
+          <tr><td class="param-label">Tensão Cliente</td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td><td><input type="text"/></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FILTRO + ÓLEO -->
+  <div class="section">
+    <div class="filtro-oleo">
+      <div class="filtro-box">
+        <div class="box-title">Filtro Ar</div>
+        <div class="filtro-options">
+          <label><input type="radio" name="filtro" value="Sujo"> Sujo</label>
+          <label><input type="radio" name="filtro" value="Limpo"> Limpo</label>
+        </div>
+      </div>
+      <div class="oleo-box">
+        <div class="box-title">Óleo Compressor</div>
+        <div class="oleo-row"><label>Marca</label><input type="text" id="oleo-marca"/></div>
+        <div class="oleo-row"><label>Tipo</label><input type="text" id="oleo-tipo"/></div>
+        <div class="oleo-row"><label>Nível</label><input type="text" id="oleo-nivel"/></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOMENDAÇÕES -->
+  <div class="section">
+    <div class="field-long"><label>Recomendações / Observações:</label><textarea id="recomendacoes"></textarea></div>
+  </div>
+
+  <!-- ASSINATURAS -->
+  <div class="section">
+    <div class="assinaturas">
+      <div class="assinatura-box">
+        <div class="box-title">Técnico Responsável:</div>
+        <div class="nome-linha"><label>Nome:</label><input type="text" id="tec-nome"/></div>
+        <div class="sig-label">Assinatura:</div>
+        <div class="sig-canvas-wrap">
+          <canvas id="sig-tecnico" width="600" height="160"></canvas>
+          <div class="sig-clear" onclick="clearSig('sig-tecnico')">limpar</div>
+        </div>
+      </div>
+      <div class="assinatura-box">
+        <div class="box-title">Cliente:</div>
+        <div class="nome-linha"><label>Nome:</label><input type="text" id="cli-nome"/></div>
+        <div class="sig-label">Assinatura:</div>
+        <div class="sig-canvas-wrap">
+          <canvas id="sig-cliente" width="600" height="160"></canvas>
+          <div class="sig-clear" onclick="clearSig('sig-cliente')">limpar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<!-- TOAST -->
+<button class="btn-gerar" onclick="gerarPDF()">📄 GERAR PDF</button>
+
+<div class="success-screen" id="tela-sucesso">
+  <div style="font-size:40px;margin-bottom:12px">✓</div>
+  <h2>PDF Gerado com Sucesso!</h2>
+  <p>Compartilhe com seu gestor.</p>
+  <button class="btn-nova" onclick="location.reload()">+ Novo Relatório</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── ESTADO ───────────────────────────────
-let currentPage = 0;
-let statusSelecionado = '';
-const osNum = 'OS-' + String(Math.floor(1000 + Math.random() * 9000));
-
-// Data/hora no header
-const agora = new Date();
-document.getElementById('data-hora-header').textContent =
-  agora.toLocaleDateString('pt-BR') + ' · ' + agora.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
-document.getElementById('os-id-header').innerHTML =
-  `<strong>${osNum}</strong> — ${agora.toLocaleDateString('pt-BR')} ${agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
-
-// Preenche data de hoje
-document.getElementById('tec-data').value = agora.toISOString().split('T')[0];
-
-// ─── NAVEGAÇÃO ────────────────────────────
-function goTo(n) {
-  document.querySelectorAll('.page').forEach((p,i) => p.classList.toggle('active', i === n));
-  document.querySelectorAll('.step-btn').forEach((b,i) => {
-    b.classList.toggle('active', i === n);
-    b.classList.toggle('done', i < n);
-  });
-  currentPage = n;
-  window.scrollTo(0, 0);
-  if (n === 3) buildPreview();
-}
-
-function nextPage(from) {
-  if (!validar(from)) return;
-  goTo(from + 1);
-}
-
-// ─── VALIDAÇÃO ────────────────────────────
-function validar(page) {
-  const rules = [
-    [{id:'cliente-nome',label:'Nome do cliente'},{id:'cliente-end',label:'Endereço'},{id:'tec-nome',label:'Nome do técnico'},{id:'tec-data',label:'Data'}],
-    [{id:'serv-tipo',label:'Tipo de serviço'},{id:'serv-executado',label:'Serviço executado'}],
-    []
-  ];
-  for (const r of rules[page]) {
-    if (!document.getElementById(r.id).value.trim()) {
-      toast(`⚠️ Preencha: ${r.label}`);
-      document.getElementById(r.id).focus();
-      return false;
-    }
-  }
-  if (page === 1 && !statusSelecionado) { toast('⚠️ Selecione o status do atendimento'); return false; }
-  if (page === 2) {
-    if (isCanvasBlank('sig-cliente')) { toast('⚠️ Assinatura do cliente está vazia'); return false; }
-    if (isCanvasBlank('sig-tecnico')) { toast('⚠️ Assinatura do técnico está vazia'); return false; }
-  }
-  return true;
-}
-
-// ─── STATUS ───────────────────────────────
-function selectStatus(el, cor) {
-  document.querySelectorAll('.status-chip').forEach(c => c.className = 'status-chip');
-  el.classList.add('selected-' + cor);
-  statusSelecionado = el.textContent.trim();
-}
-
-// ─── CANVAS / ASSINATURAS ─────────────────
-function initCanvas(id, statusId) {
+// ── CANVAS ──────────────────────────────────
+function initCanvas(id) {
   const canvas = document.getElementById(id);
   const ctx = canvas.getContext('2d');
   let drawing = false;
-
-  function getPos(e) {
+  function pos(e) {
     const r = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / r.width;
-    const scaleY = canvas.height / r.height;
+    const sx = canvas.width/r.width, sy = canvas.height/r.height;
     const src = e.touches ? e.touches[0] : e;
-    return { x: (src.clientX - r.left) * scaleX, y: (src.clientY - r.top) * scaleY };
+    return { x:(src.clientX-r.left)*sx, y:(src.clientY-r.top)*sy };
   }
+  ctx.strokeStyle='#000'; ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round';
+  canvas.addEventListener('mousedown',e=>{drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);});
+  canvas.addEventListener('mousemove',e=>{if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();});
+  canvas.addEventListener('mouseup',()=>drawing=false);
+  canvas.addEventListener('mouseleave',()=>drawing=false);
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);},{passive:false});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();},{passive:false});
+  canvas.addEventListener('touchend',()=>drawing=false);
+}
+function clearSig(id){document.getElementById(id).getContext('2d').clearRect(0,0,600,160);}
+function isBlank(id){return !document.getElementById(id).getContext('2d').getImageData(0,0,600,160).data.some(v=>v!==0);}
+initCanvas('sig-tecnico');
+initCanvas('sig-cliente');
 
-  ctx.strokeStyle = '#0f62fe';
-  ctx.lineWidth = 3;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
+// ── TOAST ──────────────────────────────────
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
-  canvas.addEventListener('mousedown', e => { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
-  canvas.addEventListener('mousemove', e => { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
-  canvas.addEventListener('mouseup', () => { drawing = false; checkSig(id, statusId); });
-  canvas.addEventListener('mouseleave', () => { drawing = false; });
+// ── HELPERS ──────────────────────────────────
+function v(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+function fmtDate(d){if(!d)return '';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
 
-  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, {passive:false});
-  canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }, {passive:false});
-  canvas.addEventListener('touchend', () => { drawing = false; checkSig(id, statusId); });
+// ── VALIDAÇÃO ──────────────────────────────────
+function validar(){
+  if(!v('cliente')){toast('⚠️ Preencha o nome do cliente');return false;}
+  if(!v('servico')){toast('⚠️ Preencha o serviço executado');return false;}
+  if(!v('tec-nome')){toast('⚠️ Preencha o nome do técnico');return false;}
+  if(isBlank('sig-tecnico')){toast('⚠️ Assinatura do técnico está vazia');return false;}
+  if(isBlank('sig-cliente')){toast('⚠️ Assinatura do cliente está vazia');return false;}
+  return true;
 }
 
-function checkSig(id, statusId) {
-  if (!isCanvasBlank(id)) document.getElementById(statusId).classList.add('ok');
-}
+// ── PDF ──────────────────────────────────────
+async function gerarPDF(){
+  if(!validar())return;
+  const btn=document.querySelector('.btn-gerar');
+  btn.textContent='⏳ Gerando PDF...'; btn.disabled=true;
+  await new Promise(r=>setTimeout(r,100));
 
-function clearSig(id, statusId) {
-  const canvas = document.getElementById(id);
-  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-  document.getElementById(statusId).classList.remove('ok');
-}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,mg=10,cw=W-mg*2;
+  let y=10;
 
-function isCanvasBlank(id) {
-  const canvas = document.getElementById(id);
-  const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
-  return !data.some(v => v !== 0);
-}
-
-initCanvas('sig-cliente', 'status-cliente');
-initCanvas('sig-tecnico', 'status-tecnico');
-
-// ─── PREVIEW ──────────────────────────────
-function v(id) { return document.getElementById(id).value || '—'; }
-function buildPreview() {
-  const body = document.getElementById('preview-body');
-  const rows = [
-    ['Nº da OS', osNum],
-    ['Data', new Date(v('tec-data') + 'T12:00').toLocaleDateString('pt-BR')],
-    ['Técnico', v('tec-nome')],
-    ['Matrícula', v('tec-matricula')],
-    ['Cliente', v('cliente-nome')],
-    ['Endereço', v('cliente-end')],
-    ['Telefone', v('cliente-tel')],
-    ['Tipo de Serviço', v('serv-tipo')],
-    ['Equipamento', v('serv-equip')],
-    ['Status', statusSelecionado || '—'],
-    ['Horário', (v('hora-inicio') !== '—' && v('hora-fim') !== '—') ? `${v('hora-inicio')} – ${v('hora-fim')}` : '—'],
-  ];
-  body.innerHTML = rows.map(([k,val]) => `
-    <div class="preview-row">
-      <span class="preview-key">${k}</span>
-      <span class="preview-val">${val}</span>
-    </div>`).join('');
-
-  // Thumbnails de assinaturas
-  const conf = document.getElementById('sig-confirm');
-  const makeThumb = (canvasId, label) => {
-    const src = document.getElementById(canvasId).toDataURL();
-    return `<div style="flex:1;min-width:120px">
-      <div style="font-size:11px;font-weight:700;color:var(--cinza-texto);margin-bottom:4px;text-transform:uppercase">${label}</div>
-      <img src="${src}" style="width:100%;border:1px solid var(--cinza-claro);border-radius:2px;background:white" />
-    </div>`;
+  const secTitulo=(txt)=>{
+    doc.setFillColor(240,240,240);
+    doc.rect(mg,y,cw,6,'F');
+    doc.setDrawColor(150); doc.rect(mg,y,cw,6);
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(0);
+    doc.text(txt,W/2,y+4.2,{align:'center'});
+    y+=7;
   };
-  conf.innerHTML = makeThumb('sig-cliente','Cliente') + makeThumb('sig-tecnico','Técnico');
-}
 
-// ─── GERAR PDF ────────────────────────────
-async function gerarPDF() {
-  const btn = document.querySelector('#page-3 .btn-success');
-  btn.textContent = '⏳ Gerando PDF...';
-  btn.disabled = true;
+  const campo=(label,valor,x,w,yy)=>{
+    doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(80);
+    doc.text(label+':',x+1,yy+3);
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(0);
+    doc.text(valor||'',x+1,yy+7.5);
+    doc.setDrawColor(180); doc.rect(x,yy,w,10);
+  };
 
-  await new Promise(r => setTimeout(r, 100));
+  const paginaMax = 277;
+  const novaPageSeNecessario=(alturaNeeded)=>{
+    if(y+alturaNeeded>paginaMax){ doc.addPage(); y=10; }
+  };
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const campoTexto=(label,valor)=>{
+    doc.setFont('helvetica','normal'); doc.setFontSize(9);
+    const lines=doc.splitTextToSize(valor||'',cw-4);
+    const h=Math.max(lines.length*5,10);
+    // verifica se o bloco inteiro cabe na página
+    novaPageSeNecessario(h+10);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(0);
+    doc.text(label+':',mg+1,y+4); y+=5;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9);
+    doc.rect(mg,y,cw,h);
+    doc.text(lines,mg+2,y+4);
+    y+=h+2;
+  };
 
-  const W = 210, mg = 15;
-  let y = 0;
+  // TÍTULO
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(0);
+  doc.text('RELATÓRIO DE SERVIÇO TÉCNICO',W/2,y+5,{align:'center'});
+  doc.setDrawColor(0); doc.rect(mg,y,cw,9); y+=11;
 
-  // ── Cabeçalho ──────────────────────────
-  doc.setFillColor(15, 98, 254);
-  doc.rect(0, 0, W, 28, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
-  doc.text('ORDEM DE SERVIÇO', mg, 12);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text(osNum, mg, 19);
-  doc.text('Data: ' + new Date(v('tec-data') + 'T12:00').toLocaleDateString('pt-BR'), W - mg, 19, {align:'right'});
-  y = 35;
+  // CLIENTE
+  campo('CLIENTE',v('cliente'),mg,cw,y); y+=11;
+  campo('ENDEREÇO',v('endereco'),mg,cw,y); y+=11;
+  campo('CIDADE',v('cidade'),mg,cw*0.55,y);
+  campo('U.F.',v('uf'),mg+cw*0.55,cw*0.15,y);
+  campo('CEP',v('cep'),mg+cw*0.70,cw*0.30,y); y+=11;
 
-  // ── Seção ──────────────────────────────
-  function secao(titulo) {
-    doc.setFillColor(22, 22, 22);
-    doc.rect(mg, y, W - mg * 2, 7, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(9);
-    doc.text(titulo, mg + 3, y + 5);
-    y += 10;
-    doc.setTextColor(0, 0, 0);
+
+  // EQUIPAMENTO
+  campo('MÁQUINA',v('maquina'),mg,cw*0.4,y);
+  campo('Nº SÉRIE',v('nserie'),mg+cw*0.4,cw*0.3,y);
+  campo('Nº SÉRIE MOTOR',v('nserie-motor'),mg+cw*0.7,cw*0.3,y); y+=11;
+  campo('Nº SÉRIE ELEMENTO',v('nserie-elem'),mg,cw*0.4,y);
+  campo('HORAS',v('horas'),mg+cw*0.4,cw*0.3,y);
+  campo('HORAS EM CARGA',v('horas-carga'),mg+cw*0.7,cw*0.3,y); y+=11;
+
+  // TIPO SERVIÇO
+  const tipos=['Manutenção Corretiva','Partida Técnica','Garantia','Contrato de Manutenção','Preventiva','Cortesia'];
+  const marcados=tipos.filter((t,i)=>document.getElementById('t'+(i+1)).checked);
+  campo('TIPO DE SERVIÇO',marcados.join(' | ')||'—',mg,cw,y); y+=11;
+
+  // DESLOCAMENTO
+  secTitulo('DESLOCAMENTO');
+  const dcols=['Data','Saída','Chegada','Saída','Chegada','km','km'];
+  const dw=[0.18,0.14,0.14,0.14,0.14,0.13,0.13];
+  let dx=mg;
+  doc.setFont('helvetica','bold'); doc.setFontSize(8);
+  dcols.forEach((c,i)=>{
+    const w=cw*dw[i];
+    doc.setFillColor(240,240,240); doc.rect(dx,y,w,6,'F'); doc.rect(dx,y,w,6);
+    doc.text(c,dx+w/2,y+4.2,{align:'center'}); dx+=w;
+  }); y+=6;
+
+  document.querySelectorAll('#tabela-desloc tbody tr').forEach(row=>{
+    const cells=row.querySelectorAll('input');
+    const vals=Array.from(cells).map(c=>c.type==='date'?fmtDate(c.value):c.value||'');
+    dx=mg; doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    dw.forEach((w2,i)=>{
+      const ww=cw*w2; doc.rect(dx,y,ww,6);
+      doc.text(vals[i],dx+ww/2,y+4.2,{align:'center'}); dx+=ww;
+    }); y+=6;
+  }); y+=2;
+
+  // TEXTOS
+  campoTexto('Ocorrência Informada',v('ocorrencia'));
+  campoTexto('Falha Encontrada',v('falha'));
+  campoTexto('Serviço Executado',v('servico'));
+
+  // MATERIAL
+  secTitulo('MATERIAL UTILIZADO');
+  const mcols=['Código','Descrição','Quantidade'],mw=[0.25,0.55,0.20];
+  dx=mg; doc.setFont('helvetica','bold'); doc.setFontSize(8);
+  mcols.forEach((c,i)=>{
+    const w=cw*mw[i];
+    doc.setFillColor(240,240,240); doc.rect(dx,y,w,6,'F'); doc.rect(dx,y,w,6);
+    doc.text(c,dx+w/2,y+4.2,{align:'center'}); dx+=w;
+  }); y+=6;
+
+  document.querySelectorAll('#tbody-material tr').forEach(row=>{
+    const cod=row.querySelector('.m-cod').value;
+    const desc=row.querySelector('.m-desc').value;
+    const qtd=row.querySelector('.m-qtd').value;
+    if(!cod&&!desc&&!qtd)return;
+    dx=mg; doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    [cod,desc,qtd].forEach((val,i)=>{
+      const w=cw*mw[i]; doc.rect(dx,y,w,6);
+      doc.text(val||'',dx+2,y+4.2); dx+=w;
+    }); y+=6;
+  }); y+=2;
+
+  // INSPEÇÃO
+  secTitulo('RELATÓRIO DE INSPEÇÃO');
+  const iparams=['Pressão de Trabalho','Temperatura Ambiente','Temp. Trabalho Compressor','Reg. relé térmico motor principal','Amp. Motor principal','Tensão Cliente'];
+  const lw=cw*0.40,cellw=cw*0.15;
+  doc.setFont('helvetica','bold'); doc.setFontSize(7);
+  doc.setFillColor(240,240,240); doc.rect(mg,y,lw,5,'F'); doc.rect(mg,y,lw,5);
+  doc.rect(mg+lw,y,cellw*2,5,'F'); doc.text('Parâmetro Inicial',mg+lw+cellw,y+3.5,{align:'center'}); doc.rect(mg+lw,y,cellw*2,5);
+  doc.rect(mg+lw+cellw*2,y,cellw*2,5,'F'); doc.text('Parâmetro Final',mg+lw+cellw*3,y+3.5,{align:'center'}); doc.rect(mg+lw+cellw*2,y,cellw*2,5);
+  y+=5;
+  ['Carga','Alívio','Carga','Alívio'].forEach((c,i)=>{
+    const x=mg+lw+(i*cellw);
+    doc.setFillColor(245,245,245); doc.rect(x,y,cellw,5,'F'); doc.rect(x,y,cellw,5);
+    doc.text(c,x+cellw/2,y+3.5,{align:'center'});
+  }); y+=5;
+
+  document.querySelectorAll('.inspecao-table tbody tr').forEach((row,ri)=>{
+    const inputs=row.querySelectorAll('input');
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+    doc.rect(mg,y,lw,6); doc.text(iparams[ri],mg+2,y+4);
+    inputs.forEach((inp,ii)=>{
+      const x=mg+lw+(ii*cellw); doc.rect(x,y,cellw,6);
+      doc.text(inp.value||'',x+cellw/2,y+4,{align:'center'});
+    }); y+=6;
+  }); y+=2;
+
+  // FILTRO + ÓLEO
+  const filtroVal=document.querySelector('input[name="filtro"]:checked');
+  const fw=cw/2,fh=18;
+  doc.setFont('helvetica','bold'); doc.setFontSize(8);
+  doc.setFillColor(240,240,240); doc.rect(mg,y,fw,5,'F'); doc.rect(mg,y,fw,5);
+  doc.text('Filtro Ar',mg+fw/2,y+3.5,{align:'center'});
+  doc.setFillColor(240,240,240); doc.rect(mg+fw,y,fw,5,'F'); doc.rect(mg+fw,y,fw,5);
+  doc.text('Óleo Compressor',mg+fw+fw/2,y+3.5,{align:'center'}); y+=5;
+  doc.setFont('helvetica','normal'); doc.setFontSize(9);
+  doc.rect(mg,y,fw,fh); doc.text('Estado: '+(filtroVal?filtroVal.value:'—'),mg+2,y+8);
+  doc.rect(mg+fw,y,fw,fh);
+  doc.text('Marca: '+v('oleo-marca'),mg+fw+2,y+5);
+  doc.text('Tipo: '+v('oleo-tipo'),mg+fw+2,y+10);
+  doc.text('Nível: '+v('oleo-nivel'),mg+fw+2,y+15);
+  y+=fh+2;
+
+  // RECOMENDAÇÕES
+  campoTexto('Recomendações / Observações',v('recomendacoes'));
+
+  // ASSINATURAS — nova página se não couber
+  const sw=cw/2,sh=42;
+  if(y+sh>270){ doc.addPage(); y=10; }
+  doc.setFont('helvetica','bold'); doc.setFontSize(8);
+  // Assinaturas — renderiza canvas em imagem com fundo branco
+  function canvasComFundo(id) {
+    const orig = document.getElementById(id);
+    const tmp = document.createElement('canvas');
+    tmp.width = orig.width; tmp.height = orig.height;
+    const ctx = tmp.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, tmp.width, tmp.height);
+    ctx.drawImage(orig, 0, 0);
+    return tmp.toDataURL('image/png');
   }
 
-  function linha(chave, valor) {
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8.5);
-    doc.setTextColor(82, 82, 82);
-    doc.text(chave + ':', mg + 2, y);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(22, 22, 22);
-    const lines = doc.splitTextToSize(valor || '—', W - mg * 2 - 45);
-    doc.text(lines, mg + 45, y);
-    y += Math.max(lines.length * 5, 6);
-  }
+  doc.setFont('helvetica','bold'); doc.setFontSize(8);
+  doc.rect(mg,y,sw,sh); doc.text('Técnico Responsável:',mg+2,y+5);
+  doc.text('Nome: '+v('tec-nome'),mg+2,y+11);
+  doc.text('Assinatura:',mg+2,y+17);
+  doc.addImage(canvasComFundo('sig-tecnico'),'PNG',mg+2,y+19,sw-4,21);
+  doc.rect(mg+sw,y,sw,sh); doc.text('Cliente:',mg+sw+2,y+5);
+  doc.text('Nome: '+v('cli-nome'),mg+sw+2,y+11);
+  doc.text('Assinatura:',mg+sw+2,y+17);
+  doc.addImage(canvasComFundo('sig-cliente'),'PNG',mg+sw+2,y+19,sw-4,21);
+  y+=sh;
 
-  function espaco(n = 4) { y += n; }
+  // RODAPÉ
+  doc.setFontSize(7); doc.setTextColor(130);
+  doc.text('Gerado em: '+new Date().toLocaleString('pt-BR'),W/2,y+5,{align:'center'});
 
-  // ── DADOS DO CLIENTE ──
-  secao('DADOS DO CLIENTE');
-  linha('Nome / Empresa', v('cliente-nome'));
-  linha('Documento', v('cliente-doc'));
-  linha('Telefone', v('cliente-tel'));
-  linha('Endereço', v('cliente-end'));
-  espaco();
+  doc.save('RST_'+(v('cliente').replace(/\s+/g,'_')||'cliente')+'_'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.pdf');
 
-  // ── DADOS DO TÉCNICO ──
-  secao('TÉCNICO RESPONSÁVEL');
-  linha('Nome', v('tec-nome'));
-  linha('Matrícula', v('tec-matricula'));
-  linha('Data de Atendimento', new Date(v('tec-data') + 'T12:00').toLocaleDateString('pt-BR'));
-  const ini = v('hora-inicio'), fim = v('hora-fim');
-  if (ini !== '—' || fim !== '—') linha('Horário', `${ini} – ${fim}`);
-  espaco();
-
-  // ── SERVIÇO ──
-  secao('SERVIÇO EXECUTADO');
-  linha('Tipo', v('serv-tipo'));
-  linha('Equipamento / Local', v('serv-equip'));
-  linha('Status', statusSelecionado);
-  espaco(2);
-  if (v('serv-problema') !== '—') {
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(82,82,82);
-    doc.text('Problema Relatado:', mg + 2, y); y += 5;
-    doc.setFont('helvetica', 'normal'); doc.setTextColor(22,22,22);
-    const lp = doc.splitTextToSize(v('serv-problema'), W - mg * 2 - 4);
-    doc.text(lp, mg + 2, y); y += lp.length * 5 + 3;
-  }
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(82,82,82);
-  doc.text('Serviço Executado:', mg + 2, y); y += 5;
-  doc.setFont('helvetica', 'normal'); doc.setTextColor(22,22,22);
-  const le = doc.splitTextToSize(v('serv-executado'), W - mg * 2 - 4);
-  doc.text(le, mg + 2, y); y += le.length * 5 + 3;
-
-  if (v('serv-pecas') !== '—') {
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(82,82,82);
-    doc.text('Peças/Materiais:', mg + 2, y); y += 5;
-    doc.setFont('helvetica', 'normal'); doc.setTextColor(22,22,22);
-    const lmat = doc.splitTextToSize(v('serv-pecas'), W - mg * 2 - 4);
-    doc.text(lmat, mg + 2, y); y += lmat.length * 5;
-  }
-  espaco(6);
-
-  // ── ASSINATURAS ──
-  secao('ASSINATURAS');
-  espaco(2);
-  const sigW = (W - mg * 2 - 10) / 2;
-  const sigH = 28;
-
-  // Cliente
-  doc.setFillColor(250,250,250);
-  doc.setDrawColor(200,200,200);
-  doc.rect(mg, y, sigW, sigH);
-  const sigCliente = document.getElementById('sig-cliente').toDataURL('image/png');
-  doc.addImage(sigCliente, 'PNG', mg + 1, y + 1, sigW - 2, sigH - 2);
-
-  // Técnico
-  doc.rect(mg + sigW + 10, y, sigW, sigH);
-  const sigTecnico = document.getElementById('sig-tecnico').toDataURL('image/png');
-  doc.addImage(sigTecnico, 'PNG', mg + sigW + 11, y + 1, sigW - 2, sigH - 2);
-
-  y += sigH + 4;
-  doc.setFontSize(8);
-  doc.setTextColor(82,82,82);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Assinatura do Cliente', mg + sigW / 2, y, {align:'center'});
-  doc.text('Assinatura do Técnico', mg + sigW + 10 + sigW / 2, y, {align:'center'});
-  y += 5;
-  doc.setFont('helvetica', 'normal');
-  doc.text(v('cliente-nome'), mg + sigW / 2, y, {align:'center'});
-  doc.text(v('tec-nome'), mg + sigW + 10 + sigW / 2, y, {align:'center'});
-
-  // ── Rodapé ──
-  y = 285;
-  doc.setFillColor(240,240,240);
-  doc.rect(0, y, W, 12, 'F');
-  doc.setFontSize(7.5);
-  doc.setTextColor(130,130,130);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`${osNum} · Gerado em ${new Date().toLocaleString('pt-BR')}`, W/2, y+7, {align:'center'});
-
-  // ── Salva ──
-  doc.save(`${osNum}_${v('cliente-nome').replace(/\s+/g,'_')}.pdf`);
-
-  btn.disabled = false;
-  btn.textContent = '📄 Gerar PDF e Finalizar';
-
-  document.getElementById('os-final-num').textContent = osNum;
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-success').classList.add('active');
-  window.scrollTo(0,0);
-}
-
-// ─── NOVA OS ──────────────────────────────
-function novaOS() { location.reload(); }
-
-// ─── TOAST ────────────────────────────────
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  btn.disabled=false; btn.textContent='📄 GERAR PDF';
+  document.getElementById('formulario').style.display='none';
+  document.querySelector('.btn-gerar').style.display='none';
+  document.getElementById('tela-sucesso').style.display='block';
 }
 </script>
 </body>
