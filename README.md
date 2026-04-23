@@ -4,6 +4,13 @@ Formulário web responsivo para técnicos preencherem o relatório de serviço t
 
 ---
 
+## 📸 Preview
+
+![PDF gerado - página 1](screen1.png)
+![PDF gerado - página 2](screen2.png)
+
+---
+
 ## Funcionalidades
 
 - **Formulário único:** uma única tela com todos os campos do relatório original, sem etapas ou paginação
