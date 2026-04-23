@@ -1,6 +1,6 @@
 # Relatório de Serviço Técnico
 
-Formulário web responsivo para técnicos preencherem o relatório de serviço técnico fiel ao documento original da empresa, coletar assinaturas digitais do cliente e do técnico, e gerar automaticamente um PDF profissional — tudo sem depender de internet ou aplicativo instalado.
+Formulário web responsivo para técnicos preencherem o relatório de serviço técnico fiel ao documento original da empresa, coletar assinaturas digitais do cliente e do técnico, e gerar automaticamente um PDF profissional, tudo sem depender de internet ou aplicativo instalado.
 
 ---
 
