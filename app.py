@@ -10,7 +10,17 @@ import os
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "https://teixeira-pri.github.io",
+            "http://localhost:*",
+            "http://127.0.0.1:*"
+        ],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 # Configurações de e-mail (lidas das variáveis de ambiente do Render)
 EMAIL_REMETENTE = os.environ.get('EMAIL_REMETENTE')

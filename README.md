@@ -1,32 +1,39 @@
 # Sistema de Relatório Técnico ICETAR
 
-Sistema completo de geração de relatórios técnicos em campo com envio automático por e-mail.
+Sistema web para geração de relatórios técnicos em campo, com preenchimento via celular, geração automática de PDF e envio por e-mail com anexo.
 
-## 🎯 Como Funciona
+## 🎯 Objetivo
 
-1. **Técnico em campo** acessa o formulário pelo celular
-2. Preenche dados do serviço (cliente, equipamentos, fotos, assinaturas)
-3. Clica em **"Gerar PDF"**
-4. Sistema automaticamente:
-   - Baixa o PDF no celular do técnico
-   - Envia o PDF por e-mail para o gestor
+Automatizar o processo de relatórios técnicos, reduzindo retrabalho manual, padronizando os registros e agilizando o envio das informações para gestão.
 
-## 🔗 Link do Formulário
+## 🚀 Como funciona
 
-```
+1. O técnico acessa o formulário pelo celular  
+2. Preenche os dados do atendimento  
+3. Adiciona fotos e assinaturas digitais  
+4. Clica em **Gerar PDF**  
+5. O sistema:
+   - baixa o PDF no dispositivo  
+   - envia automaticamente o PDF por e-mail para o gestor  
+
+## 🔗 Link do formulário
+
 https://teixeira-pri.github.io/relatorio-tecnico/ordem-de-servico.html
-```
 
-## 📁 Estrutura do Projeto
+## 🛠️ Tecnologias utilizadas
 
-```
-relatorio-tecnico/
-├── ordem-de-servico.html    # Formulário completo (frontend)
-├── app.py                    # Backend Flask (envio de e-mail)
-├── requirements.txt          # Dependências Python
-└── README.md                 # Este arquivo
-```
+- HTML  
+- CSS  
+- JavaScript  
+- jsPDF  
+- Python  
+- Flask  
+- Flask-CORS  
+- SMTP (Gmail)  
+- GitHub Pages  
+- Render  
 
+<<<<<<< HEAD
 ## 🔒 Uso e Direitos Autorais
 
 ⚠️ **AVISO IMPORTANTE**
@@ -51,104 +58,65 @@ Todos os direitos reservados © 2024-2026 Priscila Teixeira
 ---
 
 ## 🚀 Deploy
+=======
+## 📁 Estrutura do projeto
+>>>>>>> e5da405804f61e30bba27375e29c16543033daaa
 
-### Frontend (GitHub Pages)
-- **URL:** https://teixeira-pri.github.io/relatorio-tecnico/ordem-de-servico.html
-- **Hospedagem:** GitHub Pages (gratuito)
-- **Atualização:** Automática a cada commit na branch `main`
+    relatorio-tecnico/
+    ├── ordem-de-servico.html    # Frontend do formulário
+    ├── app.py                   # Backend Flask para envio de e-mail
+    ├── requirements.txt         # Dependências Python
+    └── README.md                # Documentação do projeto
 
-### Backend (Render.com)
-- **URL:** https://relatorio-tecnico.onrender.com
-- **Hospedagem:** Render.com (plano gratuito)
-- **Variáveis de ambiente necessárias:**
-  - `EMAIL_REMETENTE` - E-mail Gmail que envia
-  - `EMAIL_SENHA_APP` - Senha de app do Gmail (16 caracteres)
-  - `EMAIL_DESTINATARIO` - E-mail do gestor que recebe
+## ⚙️ Deploy
 
-## ⚙️ Configuração do Backend
+### Frontend
 
-### 1. Gerar Senha de App do Gmail
+- Hospedagem: GitHub Pages  
+- URL: https://teixeira-pri.github.io/relatorio-tecnico/ordem-de-servico.html  
 
-1. Acesse: https://myaccount.google.com/apppasswords
-2. Ative verificação em 2 etapas (se ainda não ativou)
-3. Crie uma senha de app:
-   - Nome: "Relatorio ICETAR"
-   - Copie a senha de 16 caracteres
+### Backend
 
-### 2. Configurar Variáveis no Render
+- Hospedagem: Render  
+- URL: https://relatorio-tecnico.onrender.com  
 
-1. Acesse o painel do Render: https://dashboard.render.com
-2. Selecione o serviço `relatorio-tecnico`
-3. Vá em **Environment** no menu lateral
-4. Configure as 3 variáveis:
-   - `EMAIL_REMETENTE` → seu-email@gmail.com
-   - `EMAIL_SENHA_APP` → senha-de-16-caracteres
-   - `EMAIL_DESTINATARIO` → email-do-gestor@empresa.com
-5. Clique em **Save Changes**
+## 🔐 Variáveis de ambiente
 
-## 🔒 Segurança
+O backend utiliza variáveis de ambiente para proteger as credenciais de envio de e-mail:
+EMAIL_REMETENTE
+EMAIL_SENHA_APP
+EMAIL_DESTINATARIO
 
-- ✅ Nenhuma credencial está exposta no código público
-- ✅ Todas as credenciais são lidas de variáveis de ambiente
-- ✅ Backend usa HTTPS (comunicação criptografada)
-- ✅ Senhas de app do Gmail são revogáveis a qualquer momento
 
-## 🛠️ Desenvolvimento Local (Opcional)
+Nenhuma credencial sensível fica exposta no código público.
 
-Se quiser rodar o backend localmente para testes:
+## 📝 Funcionalidades
+
+- Formulário responsivo para uso em celular  
+- Dados do cliente e equipamento  
+- Registro do serviço executado  
+- Upload de fotos  
+- Assinatura digital do técnico e do cliente  
+- Geração automática de PDF  
+- Download do PDF no dispositivo  
+- Envio automático do PDF por e-mail  
+
+
+## 💻 Como rodar localmente
+
+Instale as dependências:
 
 ```bash
-# Instalar dependências
 pip install -r requirements.txt
 
-# Configurar variáveis de ambiente (Windows)
+Configure as variáveis de ambiente (Windows):
+---
 set EMAIL_REMETENTE=seu-email@gmail.com
 set EMAIL_SENHA_APP=sua-senha-de-app
-set EMAIL_DESTINATARIO=email-gestor@empresa.com
-
-# Rodar servidor
-python app.py
-```
-
-O servidor vai rodar em `http://localhost:5000`
-
-## 📝 Funcionalidades do Formulário
-
-- ✅ Logo da ICETAR
-- ✅ Dados do cliente e técnico
-- ✅ Informações de equipamentos (compressor/vácuo)
-- ✅ Upload de até 4 fotos
-- ✅ Assinaturas digitais (técnico e cliente)
-- ✅ Geração de PDF profissional
-- ✅ Download automático do PDF
-- ✅ Envio automático por e-mail com PDF anexado
-
-## ⚡ Observações Importantes
-
-- **Primeira requisição:** O backend no Render (plano gratuito) "dorme" após 15 minutos de inatividade. A primeira requisição após isso pode demorar ~30 segundos para acordar. Depois fica rápido.
-- **Limite de e-mails:** Não há limite no sistema, mas o Gmail pode ter limites de envio (geralmente 500 e-mails/dia para contas pessoais).
-
-## 🐛 Resolução de Problemas
-
-### E-mail não está chegando?
-
-1. Verifique se as variáveis de ambiente estão configuradas corretamente no Render
-2. Confira a caixa de spam do destinatário
-3. Verifique se a senha de app do Gmail está correta
-4. Veja os logs no Render para identificar erros
-
-### PDF não está sendo gerado?
-
-1. Verifique se o formulário está sendo acessado via HTTPS (GitHub Pages)
-2. Teste em outro navegador
-3. Limpe o cache do navegador
-
-## 📞 Suporte
-
-Para dúvidas ou problemas, entre em contato com a equipe de TI da ICETAR.
-
+set EMAIL_DESTINATARIO=email-do-gestor@empresa.com
 ---
 
+<<<<<<< HEAD
 ## 📄 Licença
 
 Este projeto está sob licença restritiva. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
@@ -160,3 +128,12 @@ Este projeto está sob licença restritiva. Veja o arquivo [LICENSE](LICENSE) pa
 **Desenvolvido por Priscila Teixeira para ICETAR** | Sistema de Relatórios Técnicos v1.0
 
 [LinkedIn](https://www.linkedin.com/in/priscila-teixeira) • [GitHub](https://github.com/Teixeira-Pri)
+=======
+Execute o backend:
+python app.py
+
+O servidor será iniciado em:
+http://localhost:5000
+
+
+>>>>>>> e5da405804f61e30bba27375e29c16543033daaa
