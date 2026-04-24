@@ -34,12 +34,12 @@ https://teixeira-pri.github.io/relatorio-tecnico/ordem-de-servico.html
 - Render  
 
 ## 📁 Estrutura do projeto
-relatorio-tecnico/
-├── ordem-de-servico.html # Frontend do formulário
-├── app.py # Backend Flask para envio de e-mail
-├── requirements.txt # Dependências Python
-└── README.md # Documentação do projeto
 
+    relatorio-tecnico/
+    ├── ordem-de-servico.html    # Frontend do formulário
+    ├── app.py                   # Backend Flask para envio de e-mail
+    ├── requirements.txt         # Dependências Python
+    └── README.md                # Documentação do projeto
 
 ## ⚙️ Deploy
 
@@ -74,17 +74,20 @@ Nenhuma credencial sensível fica exposta no código público.
 - Download do PDF no dispositivo  
 - Envio automático do PDF por e-mail  
 
+
 ## 💻 Como rodar localmente
 
 Instale as dependências:
 
+```bash
 pip install -r requirements.txt
 
 Configure as variáveis de ambiente (Windows):
-
+---
 set EMAIL_REMETENTE=seu-email@gmail.com
 set EMAIL_SENHA_APP=sua-senha-de-app
 set EMAIL_DESTINATARIO=email-do-gestor@empresa.com
+---
 
 Execute o backend:
 python app.py
@@ -92,18 +95,4 @@ python app.py
 O servidor será iniciado em:
 http://localhost:5000
 
-## ⚠️ Observações
 
-O backend hospedado no plano gratuito do Render pode entrar em modo de espera após um período de inatividade. Por isso, a primeira requisição pode demorar alguns segundos.
-
-📌 Status do projeto
-✅ Projeto em produção
-✅ Utilizado em campo
-✅ Versão inicial funcional
-
-
-## 👩‍💻 Desenvolvido por
-
-Priscila Teixeira
-
-Projeto desenvolvido para automatizar um processo real de relatórios técnicos em campo na ICETAR.
