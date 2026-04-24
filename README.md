@@ -1,166 +1,129 @@
-# Relatório de Serviço Técnico
+# Sistema de Relatório Técnico ICETAR
 
-Formulário web responsivo para técnicos preencherem o relatório de serviço técnico fiel ao documento original da empresa, coletar assinaturas digitais do cliente e do técnico, e gerar automaticamente um PDF profissional, tudo sem depender de internet ou aplicativo instalado.
+Sistema completo de geração de relatórios técnicos em campo com envio automático por e-mail.
 
----
+## 🎯 Como Funciona
 
-## 📸 Preview
+1. **Técnico em campo** acessa o formulário pelo celular
+2. Preenche dados do serviço (cliente, equipamentos, fotos, assinaturas)
+3. Clica em **"Gerar PDF"**
+4. Sistema automaticamente:
+   - Baixa o PDF no celular do técnico
+   - Envia o PDF por e-mail para o gestor
 
-![PDF gerado - página 1](screen1.png)
-![PDF gerado - página 2](screen2.png)
-
----
-
-## Funcionalidades
-
-- **Formulário único:** uma única tela com todos os campos do relatório original, sem etapas ou paginação
-- **Dados do cliente:** nome/empresa, endereço, telefone, contato
-- **Dados do equipamento:** tipo de máquina, número de série, nº de série do motor, nº de série do elemento e horas de operação
-- **Tipo de serviço:** checkboxes (Manutenção Preventiva, Manutenção Corretiva, Instalação, Configuração, Visita Técnica, Outro)
-- **Tabela de deslocamento:** registro de horários e percurso do técnico
-- **Ocorrência informada:** descrição do problema relatado pelo cliente
-- **Falha encontrada:** diagnóstico do técnico
-- **Serviço executado:** descrição detalhada do serviço realizado
-- **Material utilizado:** tabela com código, descrição e quantidade de cada item
-- **Relatório de inspeção:** parâmetros técnicos com valores inicial e final (pressão, temperatura, corrente, tensão, etc.)
-- **Filtro de ar e óleo compressor:** campos dedicados para registro de estado/troca
-- **Recomendações:** campo livre para orientações ao cliente
-- **Fotos do equipamento:** até 3 fotos por relatório, tiradas diretamente pela câmera do celular e incluídas automaticamente no PDF gerado
-- **Assinaturas digitais** do técnico e do cliente via toque ou mouse (canvas de alta resolução)
-- **Geração de PDF automática** com jsPDF, fiel ao layout do relatório original
-- **100% offline** após o primeiro carregamento — sem backend, sem banco de dados
-
----
-
-## Campos do Formulário
-
-**Dados do Cliente**
-- Nome / Empresa *(obrigatório)*
-- Endereço *(obrigatório)*
-- Telefone e Contato
-
-**Dados do Equipamento**
-- Máquina / Modelo *(obrigatório)*
-- Nº de Série
-- Nº de Série do Motor
-- Nº de Série do Elemento
-- Horas de Operação
-
-**Tipo de Serviço** *(checkboxes — obrigatório)*
-- Manutenção Preventiva
-- Manutenção Corretiva
-- Instalação
-- Configuração
-- Visita Técnica
-- Outro
-
-**Tabela de Deslocamento**
-- Data, hora de saída, hora de chegada, km rodado ou local atendido
-
-**Ocorrência Informada**
-- Descrição do problema relatado pelo cliente
-
-**Falha Encontrada**
-- Diagnóstico técnico da causa raiz
-
-**Serviço Executado**
-- Descrição detalhada de tudo que foi realizado
-
-**Material Utilizado**
-| Código | Descrição | Quantidade |
-|--------|-----------|------------|
-| ...    | ...       | ...        |
-
-**Relatório de Inspeção**
-| Parâmetro | Valor Inicial | Valor Final |
-|-----------|---------------|-------------|
-| ...       | ...           | ...         |
-
-**Filtro de Ar**
-- Estado / Observação
-
-**Óleo Compressor**
-- Estado / Observação / Troca
-
-**Recomendações**
-- Campo livre para orientações ao cliente
-
-**Fotos do Equipamento**
-- Até 3 fotos por relatório, tiradas diretamente pela câmera do celular e incluídas automaticamente no PDF gerado
-- Incluídas automaticamente no PDF gerado
-
-**Assinaturas Digitais**
-- Assinatura do técnico
-- Assinatura do cliente
-
----
-
-## Como usar
-
-1. Abra o arquivo `ordem-de-servico.html` diretamente no navegador do celular ou computador — **não é necessário servidor**
-2. Preencha todos os campos do formulário em uma única tela
-3. Adicione os materiais utilizados e os parâmetros do relatório de inspeção
-4. Anexe até 3 fotos do equipamento (opcional)
-5. Colete a assinatura digital do cliente e assine como técnico
-6. Clique em **"Gerar PDF"** — o documento é baixado automaticamente com todas as fotos incluídas
-
----
-
-## Tecnologias
-
-| Tecnologia | Uso |
-|---|---|
-| HTML5 | Estrutura e semântica |
-| CSS3 | Layout responsivo, variáveis, animações |
-| JavaScript (ES6+) | Lógica, validação, canvas e geração do PDF |
-| [jsPDF](https://github.com/parallax/jsPDF) | Geração do documento PDF no navegador |
-| Google Fonts — IBM Plex Sans / Mono | Tipografia |
-
-Nenhum framework, nenhuma dependência local. Um único arquivo `.html`.
-
----
-
-## Estrutura do PDF gerado
+## 🔗 Link do Formulário
 
 ```
-┌──────────────────────────────────────┐
-│  RELATÓRIO DE SERVIÇO TÉCNICO        │  ← Cabeçalho com logo e data
-├──────────────────────────────────────┤
-│  DADOS DO CLIENTE                    │
-│  DADOS DO EQUIPAMENTO                │
-│  TIPO DE SERVIÇO                     │
-│  TABELA DE DESLOCAMENTO              │
-│  OCORRÊNCIA INFORMADA                │
-│  FALHA ENCONTRADA                    │
-│  SERVIÇO EXECUTADO                   │
-│  MATERIAL UTILIZADO                  │
-│  RELATÓRIO DE INSPEÇÃO               │
-│  FILTRO DE AR / ÓLEO COMPRESSOR      │
-│  RECOMENDAÇÕES                       │
-│  FOTOS DO EQUIPAMENTO (até 3)        │
-│  ASSINATURAS [Técnico]  [Cliente]    │
-└──────────────────────────────────────┘
-│  Gerado em DD/MM/AAAA HH:MM          │  ← Rodapé
-└──────────────────────────────────────┘
+https://teixeira-pri.github.io/relatorio-tecnico/ordem-de-servico.html
 ```
 
----
-
-## Estrutura do repositório
+## 📁 Estrutura do Projeto
 
 ```
 relatorio-tecnico/
-└── ordem-de-servico.html   # Aplicação completa (HTML + CSS + JS)
+├── ordem-de-servico.html    # Formulário completo (frontend)
+├── app.py                    # Backend Flask (envio de e-mail)
+├── requirements.txt          # Dependências Python
+└── README.md                 # Este arquivo
 ```
 
+## 🚀 Deploy
+
+### Frontend (GitHub Pages)
+- **URL:** https://teixeira-pri.github.io/relatorio-tecnico/ordem-de-servico.html
+- **Hospedagem:** GitHub Pages (gratuito)
+- **Atualização:** Automática a cada commit na branch `main`
+
+### Backend (Render.com)
+- **URL:** https://relatorio-tecnico.onrender.com
+- **Hospedagem:** Render.com (plano gratuito)
+- **Variáveis de ambiente necessárias:**
+  - `EMAIL_REMETENTE` - E-mail Gmail que envia
+  - `EMAIL_SENHA_APP` - Senha de app do Gmail (16 caracteres)
+  - `EMAIL_DESTINATARIO` - E-mail do gestor que recebe
+
+## ⚙️ Configuração do Backend
+
+### 1. Gerar Senha de App do Gmail
+
+1. Acesse: https://myaccount.google.com/apppasswords
+2. Ative verificação em 2 etapas (se ainda não ativou)
+3. Crie uma senha de app:
+   - Nome: "Relatorio ICETAR"
+   - Copie a senha de 16 caracteres
+
+### 2. Configurar Variáveis no Render
+
+1. Acesse o painel do Render: https://dashboard.render.com
+2. Selecione o serviço `relatorio-tecnico`
+3. Vá em **Environment** no menu lateral
+4. Configure as 3 variáveis:
+   - `EMAIL_REMETENTE` → seu-email@gmail.com
+   - `EMAIL_SENHA_APP` → senha-de-16-caracteres
+   - `EMAIL_DESTINATARIO` → email-do-gestor@empresa.com
+5. Clique em **Save Changes**
+
+## 🔒 Segurança
+
+- ✅ Nenhuma credencial está exposta no código público
+- ✅ Todas as credenciais são lidas de variáveis de ambiente
+- ✅ Backend usa HTTPS (comunicação criptografada)
+- ✅ Senhas de app do Gmail são revogáveis a qualquer momento
+
+## 🛠️ Desenvolvimento Local (Opcional)
+
+Se quiser rodar o backend localmente para testes:
+
+```bash
+# Instalar dependências
+pip install -r requirements.txt
+
+# Configurar variáveis de ambiente (Windows)
+set EMAIL_REMETENTE=seu-email@gmail.com
+set EMAIL_SENHA_APP=sua-senha-de-app
+set EMAIL_DESTINATARIO=email-gestor@empresa.com
+
+# Rodar servidor
+python app.py
+```
+
+O servidor vai rodar em `http://localhost:5000`
+
+## 📝 Funcionalidades do Formulário
+
+- ✅ Logo da ICETAR
+- ✅ Dados do cliente e técnico
+- ✅ Informações de equipamentos (compressor/vácuo)
+- ✅ Upload de até 4 fotos
+- ✅ Assinaturas digitais (técnico e cliente)
+- ✅ Geração de PDF profissional
+- ✅ Download automático do PDF
+- ✅ Envio automático por e-mail com PDF anexado
+
+## ⚡ Observações Importantes
+
+- **Primeira requisição:** O backend no Render (plano gratuito) "dorme" após 15 minutos de inatividade. A primeira requisição após isso pode demorar ~30 segundos para acordar. Depois fica rápido.
+- **Limite de e-mails:** Não há limite no sistema, mas o Gmail pode ter limites de envio (geralmente 500 e-mails/dia para contas pessoais).
+
+## 🐛 Resolução de Problemas
+
+### E-mail não está chegando?
+
+1. Verifique se as variáveis de ambiente estão configuradas corretamente no Render
+2. Confira a caixa de spam do destinatário
+3. Verifique se a senha de app do Gmail está correta
+4. Veja os logs no Render para identificar erros
+
+### PDF não está sendo gerado?
+
+1. Verifique se o formulário está sendo acessado via HTTPS (GitHub Pages)
+2. Teste em outro navegador
+3. Limpe o cache do navegador
+
+## 📞 Suporte
+
+Para dúvidas ou problemas, entre em contato com a equipe de TI da ICETAR.
+
 ---
 
-## Privacidade
-
-Todos os dados são processados **localmente no navegador**. Nenhuma informação é enviada para servidores externos. O PDF é gerado e salvo diretamente no dispositivo do usuário.
-
----
-
-## Compatibilidade
-
-Testado nos navegadores móveis modernos: Chrome para Android, Safari para iOS e Firefox. Requer conexão à internet apenas no primeiro acesso, para carregar a fonte IBM Plex e a biblioteca jsPDF via CDN.
+**Desenvolvido para ICETAR** | Sistema de Relatórios Técnicos v1.0
