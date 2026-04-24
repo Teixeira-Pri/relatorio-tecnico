@@ -51,7 +51,7 @@ Este projeto foi desenvolvido como **solução interna para a ICETAR** e está d
 - ✅ Estudar a implementação técnica
 - ✅ Referenciar como exemplo educacional
 
-Para licenciamento comercial ou outros usos, entre em contato através do [LinkedIn](https://www.linkedin.com/in/priscila-teixeira) ou GitHub.
+Para licenciamento comercial ou outros usos, entre em contato através do [LinkedIn](https://www.linkedin.com/in/priscila-batista-teixeira-desenvolvedora?utm_source=share_via&utm_content=profile&utm_medium=member_android) ou GitHub.
 
 Todos os direitos reservados © 2024-2026 Priscila Teixeira
 
@@ -116,7 +116,7 @@ set EMAIL_SENHA_APP=sua-senha-de-app
 set EMAIL_DESTINATARIO=email-do-gestor@empresa.com
 ---
 
-<<<<<<< HEAD
+
 ## 📄 Licença
 
 Este projeto está sob licença restritiva. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
@@ -127,7 +127,7 @@ Este projeto está sob licença restritiva. Veja o arquivo [LICENSE](LICENSE) pa
 
 **Desenvolvido por Priscila Teixeira para ICETAR** | Sistema de Relatórios Técnicos v1.0
 
-[LinkedIn](https://www.linkedin.com/in/priscila-teixeira) • [GitHub](https://github.com/Teixeira-Pri)
+[LinkedIn](https://www.linkedin.com/in/priscila-batista-teixeira-desenvolvedora?utm_source=share_via&utm_content=profile&utm_medium=member_android) • [GitHub](https://github.com/Teixeira-Pri)
 =======
 Execute o backend:
 python app.py
