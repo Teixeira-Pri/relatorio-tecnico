@@ -59,8 +59,7 @@ Todos os direitos reservados © 2024-2026 Priscila Teixeira
 
 ## 🚀 Deploy
 =======
-## 📁 Estrutura do projeto
->>>>>>> e5da405804f61e30bba27375e29c16543033daaa
+## 📁 Estrutura do Projeto
 
     relatorio-tecnico/
     ├── ordem-de-servico.html    # Frontend do formulário
@@ -83,9 +82,11 @@ Todos os direitos reservados © 2024-2026 Priscila Teixeira
 ## 🔐 Variáveis de ambiente
 
 O backend utiliza variáveis de ambiente para proteger as credenciais de envio de e-mail:
+---
 EMAIL_REMETENTE
 EMAIL_SENHA_APP
 EMAIL_DESTINATARIO
+---
 
 
 Nenhuma credencial sensível fica exposta no código público.
@@ -127,13 +128,3 @@ Este projeto está sob licença restritiva. Veja o arquivo [LICENSE](LICENSE) pa
 
 **Desenvolvido por Priscila Teixeira para ICETAR** | Sistema de Relatórios Técnicos v1.0
 
-[LinkedIn](https://www.linkedin.com/in/priscila-batista-teixeira-desenvolvedora?utm_source=share_via&utm_content=profile&utm_medium=member_android) • [GitHub](https://github.com/Teixeira-Pri)
-=======
-Execute o backend:
-python app.py
-
-O servidor será iniciado em:
-http://localhost:5000
-
-
->>>>>>> e5da405804f61e30bba27375e29c16543033daaa
