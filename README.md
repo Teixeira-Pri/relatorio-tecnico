@@ -27,6 +27,29 @@ relatorio-tecnico/
 └── README.md                 # Este arquivo
 ```
 
+## 🔒 Uso e Direitos Autorais
+
+⚠️ **AVISO IMPORTANTE**
+
+Este projeto foi desenvolvido como **solução interna para a ICETAR** e está disponível publicamente apenas para fins de **portfólio profissional** e **demonstração técnica**.
+
+**Restrições:**
+- ❌ Uso comercial não autorizado
+- ❌ Cópia ou redistribuição do código
+- ❌ Adaptação ou criação de trabalhos derivados
+- ❌ Uso da marca ICETAR em outros contextos
+
+**Permissões:**
+- ✅ Visualizar o código-fonte
+- ✅ Estudar a implementação técnica
+- ✅ Referenciar como exemplo educacional
+
+Para licenciamento comercial ou outros usos, entre em contato através do [LinkedIn](https://www.linkedin.com/in/priscila-teixeira) ou GitHub.
+
+Todos os direitos reservados © 2024-2026 Priscila Teixeira
+
+---
+
 ## 🚀 Deploy
 
 ### Frontend (GitHub Pages)
@@ -126,4 +149,14 @@ Para dúvidas ou problemas, entre em contato com a equipe de TI da ICETAR.
 
 ---
 
-**Desenvolvido para ICETAR** | Sistema de Relatórios Técnicos v1.0
+## 📄 Licença
+
+Este projeto está sob licença restritiva. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+**Copyright © 2024-2026 Priscila Teixeira - Todos os direitos reservados**
+
+---
+
+**Desenvolvido por Priscila Teixeira para ICETAR** | Sistema de Relatórios Técnicos v1.0
+
+[LinkedIn](https://www.linkedin.com/in/priscila-teixeira) • [GitHub](https://github.com/Teixeira-Pri)
